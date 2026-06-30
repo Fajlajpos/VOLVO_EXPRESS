@@ -1,7 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Trash2, 
-  ArrowRight
+  ArrowRight,
+  Car,
+  KeyRound,
+  Wrench,
+  Flag,
+  Save,
+  Trophy,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  X,
+  Compass
 } from 'lucide-react';
 
 import { 
@@ -19,23 +30,17 @@ import {
 
 import { searchAddress, calculateRoute, type OrsSuggestion } from './services/ors';
 import { PaymentQrCode } from './components/PaymentQrCode';
-
-// Import our custom pixel art sprites
-import { 
-  PixelCar, 
-  PixelKey, 
-  PixelWrench, 
-  PixelFlag, 
-  PixelSave, 
-  PixelTrophy, 
-  PixelAlert, 
-  PixelCheck, 
-  PixelInfo, 
-  PixelCross, 
-  PixelCompass 
-} from './components/PixelIcons';
+import { playVolvoStartupSound } from './utils/engineSound';
 
 function App() {
+  // Volvo Startup Ignition screen state
+  const [isIgnited, setIsIgnited] = useState<boolean>(() => {
+    return sessionStorage.getItem('engine_ignited') === 'true';
+  });
+  const [isLoadingSound, setIsLoadingSound] = useState<boolean>(false);
+  const [showVolvoLogo, setShowVolvoLogo] = useState<boolean>(false);
+  const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
+
   // Navigation & Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
@@ -91,6 +96,15 @@ function App() {
 
   // Debounce ref for address lookup
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Calculation formulas (Reads consumption and fuel prices directly from Settings)
+  const calculateTotalPrice = useCallback((): number => {
+    const effectiveDistance = roundTrip ? distanceKm * 2 : distanceKm;
+    const fuelPrice = settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice;
+    const totalLitres = effectiveDistance * (settings.avgConsumption / 100);
+    const rawCost = totalLitres * fuelPrice;
+    return parseFloat(rawCost.toFixed(2));
+  }, [roundTrip, distanceKm, settings.fuelType, settings.avgConsumption, settings.petrolPrice, settings.dieselPrice]);
   
   // Load session, configurations and restore state
   useEffect(() => {
@@ -117,7 +131,7 @@ function App() {
       setIsManualDistance(active.distanceKm > 0 && !active.startPoint);
       
       setCurrentScreen('active-trip');
-      showToast('Rozpracovaný stage byl načten z garáže!');
+      showToast('Rozpracovaná jízda byla načtena z garáže!');
     } else {
       // Initialize trip passengers if no active trip is restored
       setTripPassengers(savedSettings.passengers.map(name => ({
@@ -149,7 +163,7 @@ function App() {
     }
   }, [
     startPoint, endPoint, stops, roundTrip, 
-    tripPassengers, distanceKm, isLoggedIn, settings
+    tripPassengers, distanceKm, isLoggedIn, settings, calculateTotalPrice
   ]);
 
   // Toast message helper
@@ -161,6 +175,29 @@ function App() {
   // Get active API key (strictly from .env)
   const getOrsApiKey = (): string => {
     return import.meta.env.VITE_ORS_API_KEY || '';
+  };
+
+  // Ignition sound & loading screen handler
+  const handleIgnition = async () => {
+    setIsLoadingSound(true);
+    // Play startup sound immediately
+    playVolvoStartupSound();
+
+    // Trigger Volvo Logo drawing animation after starting cranks
+    setTimeout(() => {
+      setShowVolvoLogo(true);
+    }, 300);
+
+    // Trigger visual overlay fade out at 4.4 seconds
+    setTimeout(() => {
+      setIsFadingOut(true);
+    }, 4400);
+
+    // Transition overlay out completely at 5.0 seconds
+    setTimeout(() => {
+      setIsIgnited(true);
+      sessionStorage.setItem('engine_ignited', 'true');
+    }, 5000);
   };
 
   // Auth Handlers
@@ -269,13 +306,13 @@ function App() {
   const handleCalculateRoute = async () => {
     const apiKey = getOrsApiKey();
     if (!apiKey) {
-      setRoutingError('VITE_ORS_API_KEY klíč v .env souboru chybí. Zadej kilometry ručně.');
+      setRoutingError('API klíč OpenRouteService v souboru .env chybí. Zadejte vzdálenost ručně.');
       setIsManualDistance(true);
       return;
     }
 
     if (!startPoint || !endPoint) {
-      setRoutingError('Chybí Start nebo Cíl!');
+      setRoutingError('Vyberte start a cíl jízdy!');
       return;
     }
 
@@ -285,7 +322,7 @@ function App() {
     if (startCoords) {
       coordsList.push(startCoords);
     } else {
-      setRoutingError('Vyber Start z nápovědy.');
+      setRoutingError('Vyberte start z nabízeného seznamu.');
       return;
     }
 
@@ -293,7 +330,7 @@ function App() {
       if (stopCoords[i]) {
         coordsList.push(stopCoords[i]!);
       } else {
-        setRoutingError(`Vyber Checkpoint ${i + 1} z nápovědy.`);
+        setRoutingError(`Vyberte checkpoint ${i + 1} z nabízeného seznamu.`);
         return;
       }
     }
@@ -301,7 +338,7 @@ function App() {
     if (endCoords) {
       coordsList.push(endCoords);
     } else {
-      setRoutingError('Vyber Cíl z nápovědy.');
+      setRoutingError('Vyberte cíl z nabízeného seznamu.');
       return;
     }
 
@@ -315,9 +352,9 @@ function App() {
     } catch (err: any) {
       console.error(err);
       if (err.message === 'INVALID_API_KEY') {
-        setRoutingError('Neplatný VITE_ORS_API_KEY v .env souboru! Zkontroluj nastavení.');
+        setRoutingError('Neplatný API klíč v .env souboru! Zkontrolujte nastavení.');
       } else {
-        setRoutingError('Routovací server neodpovídá. Zadej vzdálenost ručně.');
+        setRoutingError('Routovací server neodpovídá. Zadejte délku trasy ručně.');
       }
       setIsManualDistance(true);
     } finally {
@@ -384,14 +421,6 @@ function App() {
     setStopCoords(nextCoords);
   };
 
-  // Calculation formulas (Reads consumption and fuel prices directly from Settings)
-  const calculateTotalPrice = (): number => {
-    const effectiveDistance = roundTrip ? distanceKm * 2 : distanceKm;
-    const fuelPrice = settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice;
-    const totalLitres = effectiveDistance * (settings.avgConsumption / 100);
-    const rawCost = totalLitres * fuelPrice;
-    return parseFloat(rawCost.toFixed(2));
-  };
 
   const getActiveCheckedPassengers = (): PassengerState[] => {
     return tripPassengers.filter(p => p.checked);
@@ -507,6 +536,41 @@ function App() {
 
   const showSharedQr = unmodifiedCount > 0 && equalShareDisplay > 0;
 
+  // Render Volvo Startup overlay if not ignited yet
+  if (!isIgnited) {
+    return (
+      <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
+        <div className="ignition-card-center">
+          <h1 className="ignition-title">VOLVO EXPRESS</h1>
+          <p className="ignition-subtitle">Touge Run Expense Division</p>
+          
+          <div className={`volvo-logo-container ${showVolvoLogo ? 'show-logo' : ''}`}>
+            <img 
+              src="/volvo_logo.png" 
+              alt="Volvo Logo" 
+              className={`volvo-logo-png ${isLoadingSound ? 'engine-start' : ''}`}
+            />
+          </div>
+
+          {!isLoadingSound ? (
+            <button 
+              type="button" 
+              className="ignition-button" 
+              onClick={handleIgnition}
+            >
+              <KeyRound size={32} />
+              <span style={{ marginTop: 4 }}>NASTARTOVAT</span>
+            </button>
+          ) : (
+            <div style={{ marginTop: 20, color: 'var(--volvo-blue)', fontWeight: '700', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              Startování motoru...
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-container fade-in">
       
@@ -516,18 +580,20 @@ function App() {
           position: 'fixed',
           top: 20,
           right: 20,
-          backgroundColor: 'var(--bg-tertiary)',
-          border: '4px solid var(--accent-cyan)',
-          boxShadow: '4px 4px 0px #000',
+          backgroundColor: 'var(--bg-secondary)',
+          border: '1px solid var(--volvo-blue)',
+          borderRadius: '8px',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
           padding: '12px 24px',
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          fontSize: 16,
-          fontWeight: 'bold'
+          fontSize: 15,
+          fontWeight: '600',
+          color: 'var(--volvo-blue)'
         }} className="fade-in">
-          <PixelInfo size={24} />
+          <Info size={18} color="var(--volvo-blue)" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -535,10 +601,10 @@ function App() {
       {/* Main Header */}
       <header className="app-header">
         <div className="brand" onClick={() => isLoggedIn && setCurrentScreen('active-trip')}>
-          <PixelCar size={64} />
+          <Car size={36} className="brand-icon" />
           <div className="brand-text">
             <h1>VOLVO EXPRESS</h1>
-            <p>峠 TOUGE RUN EXPENSE DIVISION</p>
+            <p>TOUGE RUN EXPENSE DIVISION</p>
           </div>
         </div>
 
@@ -550,7 +616,7 @@ function App() {
               className="btn-logout" 
               onClick={handleLogout}
             >
-              <PixelCross size={16} />
+              <X size={16} />
               <span className="hide-mobile">Odhlásit se</span>
             </button>
           )}
@@ -562,13 +628,13 @@ function App() {
         <div className="login-wrapper">
           <div className="racing-card login-card fade-in">
             <h2 className="card-title">
-              <PixelKey size={30} style={{ marginRight: 8 }} />
-              TOUGE IGNITION / START MOTORU
+              <KeyRound size={22} style={{ marginRight: 8 }} />
+              START MOTORU / PŘIHLÁŠENÍ
             </h2>
             
             {loginError && (
               <div className="login-error">
-                <PixelAlert size={20} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
+                <AlertTriangle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
                 <span>CHYBA: NESPRÁVNÝ E-MAIL NEBO HESLO!</span>
               </div>
             )}
@@ -599,8 +665,8 @@ function App() {
               </div>
 
               <button type="submit" className="btn-racing">
-                <PixelKey size={24} />
-                <span>START MOTORU</span>
+                <KeyRound size={20} />
+                <span>PŘIHLÁSIT SE</span>
               </button>
             </form>
           </div>
@@ -615,7 +681,7 @@ function App() {
               className={`nav-tab ${currentScreen === 'active-trip' ? 'active' : ''}`}
               onClick={() => setCurrentScreen('active-trip')}
             >
-              <PixelCompass size={22} style={{ marginRight: 6 }} />
+              <Compass size={18} style={{ marginRight: 6 }} />
               Jízda (Stage)
             </button>
 
@@ -624,7 +690,7 @@ function App() {
               className={`nav-tab ${currentScreen === 'settings' ? 'active' : ''}`}
               onClick={() => setCurrentScreen('settings')}
             >
-              <PixelWrench size={22} style={{ marginRight: 6 }} />
+              <Wrench size={18} style={{ marginRight: 6 }} />
               Garáž (Tuning)
             </button>
           </nav>
@@ -635,13 +701,13 @@ function App() {
               {/* Active Trip Left Panel: Config Form */}
               <div className="racing-card">
                 <h3 className="card-title">
-                  <PixelFlag size={30} style={{ marginRight: 8 }} />
-                  ACTIVE STAGE / AKTIVNÍ ERZETA
+                  <Flag size={22} style={{ marginRight: 8 }} />
+                  AKTIVNÍ ERZETA (STAGE)
                 </h3>
                 
                 {routingError && (
                   <div className="alert-warning">
-                    <PixelAlert size={20} />
+                    <AlertTriangle size={18} />
                     <span>{routingError}</span>
                   </div>
                 )}
@@ -712,21 +778,21 @@ function App() {
                         className="btn-remove-stop" 
                         onClick={() => handleRemoveStop(idx)}
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
                 ))}
 
-                <div style={{ marginBottom: 24 }}>
+                <div style={{ marginBottom: 20 }}>
                   <button 
                     type="button" 
                     className="btn-racing btn-racing-secondary" 
                     onClick={handleAddStop}
-                    style={{ padding: '8px 16px', width: 'auto', fontSize: 18 }}
+                    style={{ padding: '8px 16px', width: 'auto' }}
                   >
-                    <PixelFlag size={18} />
-                    <span style={{ fontSize: 18 }}>+ PŘIDAT CHECKPOINT</span>
+                    <Flag size={16} />
+                    <span style={{ fontSize: '14px' }}>PŘIDAT CHECKPOINT</span>
                   </button>
                 </div>
 
@@ -766,17 +832,17 @@ function App() {
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
-                        className={`btn-racing ${!roundTrip ? 'btn-racing-cyan' : 'btn-racing-secondary'}`}
+                        className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
                         onClick={() => setRoundTrip(false)}
-                        style={{ padding: '10px 14px', fontSize: 18 }}
+                        style={{ padding: '10px 14px' }}
                       >
                         Jednosměrná
                       </button>
                       <button 
                         type="button" 
-                        className={`btn-racing ${roundTrip ? 'btn-racing-cyan' : 'btn-racing-secondary'}`}
+                        className={`btn-racing ${roundTrip ? '' : 'btn-racing-secondary'}`}
                         onClick={() => setRoundTrip(true)}
-                        style={{ padding: '10px 14px', fontSize: 18 }}
+                        style={{ padding: '10px 14px' }}
                       >
                         Zpáteční
                       </button>
@@ -786,33 +852,32 @@ function App() {
                     <label className="form-label">&nbsp;</label>
                     <button 
                       type="button" 
-                      className="btn-racing" 
+                      className="btn-racing btn-racing-cyan" 
                       onClick={handleCalculateRoute}
                       disabled={isCalculating}
-                      style={{ fontSize: 20 }}
                     >
-                      <PixelCompass size={22} />
-                      <span>{isCalculating ? 'Kalkuluji...' : 'VYPOČÍTAT STAGE'}</span>
+                      <Compass size={18} />
+                      <span>{isCalculating ? 'Vypočítávám...' : 'VYPOČÍTAT TRASU'}</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Segmented HP-like gauge bar during calculations */}
+                {/* Loading state bar during calculation */}
                 {isCalculating && (
-                  <div>
+                  <div style={{ marginTop: 15 }}>
                     <div className="nitro-gauge">
                       <div className="nitro-fill" style={{ width: '85%' }}></div>
                     </div>
                     <div className="nitro-label">
-                      <span>BOOST INJECTOR ACTIVE</span>
-                      <span className="animate-pulse">PRACUJI (MAPUJI CHECKPOINTY)</span>
+                      <span>Routování trasy</span>
+                      <span>Vyhledávám optimální cestu...</span>
                     </div>
                   </div>
                 )}
 
                 <div className="form-grid m-t-20">
                   <div className="form-group">
-                    <label className="form-label">DÉLKA STAGE (KILOMETRY)</label>
+                    <label className="form-label">DÉLKA TRASY (KILOMETRY)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -829,35 +894,34 @@ function App() {
                   
                   {isManualDistance && (
                     <div className="alert-info" style={{ marginTop: 10 }}>
-                      <PixelInfo size={18} />
-                      <span>Vzdálenost stage zadána ručně.</span>
+                      <Info size={16} />
+                      <span>Délka trasy je zadána ručně.</span>
                     </div>
                   )}
                 </div>
 
                 {/* Info block displaying current calculation preset from settings */}
-                <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '4px solid #000', padding: 16, marginTop: 10 }}>
-                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--accent-pink)', fontWeight: 'bold', marginBottom: 4 }}>
-                    Aktivní parametry z garáže:
+                <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: 16, marginTop: 16 }}>
+                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--volvo-blue)', fontWeight: 'bold', marginBottom: 4 }}>
+                    Aktivní parametry z nastavení:
                   </div>
                   <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>
-                    Spotřeba vozu: <strong style={{ color: 'var(--accent-cyan)' }}>{settings.avgConsumption} l/100km</strong> | 
-                    Palivo: <strong style={{ color: 'var(--accent-cyan)' }}>{settings.fuelType === 'petrol' ? 'Benzín' : 'Nafta'}</strong> | 
-                    Aktuální cena: <strong style={{ color: 'var(--accent-cyan)' }}>{settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice} Kč/l</strong>
+                    Spotřeba vozu: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.avgConsumption} l/100km</strong> | 
+                    Palivo: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? 'Benzín' : 'Nafta'}</strong> | 
+                    Aktuální cena: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice} Kč/l</strong>
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>
-                    Pro úpravu cen, spotřeby nebo typu paliva přejdi do záložky "Garáž (Tuning)".
+                    Pro úpravu cen, spotřeby nebo typu paliva přejděte do záložky "Garáž (Tuning)".
                   </div>
                 </div>
 
-                <div style={{ marginTop: 30, display: 'flex', gap: 12 }}>
+                <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
                   <button 
                     type="button" 
                     className="btn-racing btn-racing-danger" 
                     onClick={handleResetActiveTrip}
-                    style={{ fontSize: 20 }}
                   >
-                    <PixelCross size={20} />
+                    <X size={18} />
                     <span>VYMAZAT STATE</span>
                   </button>
                 </div>
@@ -867,13 +931,13 @@ function App() {
               <div>
                 <div className="racing-card">
                   <h3 className="card-title">
-                    <PixelFlag size={30} style={{ marginRight: 8 }} />
+                    <Flag size={22} style={{ marginRight: 8 }} />
                     Posádka v autě (Team)
                   </h3>
                   
                   {settings.passengers.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 15 }}>
-                      Žádní jezdci v paměti garáže. Přidej je nejdříve v Nastavení.
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+                      Žádní cestující v paměti nastavení. Přidejte je nejprve v záložce Nastavení.
                     </p>
                   ) : (
                     <div className="passenger-grid">
@@ -900,26 +964,26 @@ function App() {
 
                   {activeChecked.length === 0 && (
                     <div className="alert-warning" style={{ margin: '15px 0 0 0' }}>
-                      <PixelAlert size={18} />
-                      <span>Označ alespoň jednoho člena posádky!</span>
+                      <AlertTriangle size={18} />
+                      <span>Označte alespoň jednoho spolucestujícího!</span>
                     </div>
                   )}
                 </div>
 
                 <div className="racing-card">
                   <h3 className="card-title">
-                    <PixelTrophy size={30} style={{ marginRight: 8 }} />
-                    TUNING BUDGET (NÁKLADY)
+                    <Trophy size={22} style={{ marginRight: 8 }} />
+                    ROZDĚLENÍ NÁKLADŮ
                   </h3>
 
                   <div className="summary-stats">
                     <div className="stat-box">
-                      <div className="stat-label">CELKOVÉ NÁKLADY STAGE</div>
-                      <div className="stat-val text-accent">{totalPrice} Kč</div>
+                      <div className="stat-label">CELKOVÉ NÁKLADY JÍZDY</div>
+                      <div className="stat-val">{totalPrice} Kč</div>
                     </div>
                     <div className="stat-box">
                       <div className="stat-label">ZÁKLADNÍ PODÍL / OSOBA</div>
-                      <div className="stat-val text-yellow">{equalShareDisplay} Kč</div>
+                      <div className="stat-val">{equalShareDisplay} Kč</div>
                     </div>
                   </div>
 
@@ -927,13 +991,13 @@ function App() {
                   {activeChecked.length > 0 && (
                     <div style={{ marginTop: 20 }}>
                       <div className="flex-between">
-                        <h4 style={{ fontSize: 24, color: 'var(--accent-purple)' }}>DRIFT PARTNERS / ROZDĚLENÍ</h4>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                        <h4 style={{ fontSize: 16, color: 'var(--volvo-blue)', fontWeight: '700' }}>ÚPRAVA PODÍLŮ POSÁDKY</h4>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-secondary)', fontWeight: '500' }}>
                           <input 
                             type="checkbox" 
                             checked={shouldRound} 
                             onChange={(e) => setShouldRound(e.target.checked)}
-                            style={{ accentColor: 'var(--accent-pink)', width: 16, height: 16 }}
+                            style={{ accentColor: 'var(--volvo-blue)', width: 15, height: 15 }}
                           />
                           Zaokrouhlovat podíly
                         </label>
@@ -941,8 +1005,8 @@ function App() {
 
                       {sumManuals > totalPrice && (
                         <div className="alert-warning" style={{ margin: '12px 0' }}>
-                          <PixelAlert size={16} />
-                          <span>Překročen tuning budget jízdy! Uprav podíly.</span>
+                          <AlertTriangle size={16} />
+                          <span>Překročen celkový rozpočet jízdy! Upravte podíly.</span>
                         </div>
                       )}
 
@@ -972,10 +1036,10 @@ function App() {
                                       type="button" 
                                       className="btn-remove-stop"
                                       onClick={() => handleResetManualAmount(p.name)}
-                                      style={{ padding: 4 }}
+                                      style={{ padding: 6, marginLeft: 4 }}
                                       title="Reset na rovný podíl"
                                     >
-                                      <Trash2 size={14} />
+                                      <Trash2 size={12} />
                                     </button>
                                   )}
                                 </div>
@@ -992,7 +1056,7 @@ function App() {
 
                       {hasManuals && (
                         <div className="alert-info" style={{ marginTop: 15 }}>
-                          <PixelInfo size={16} />
+                          <Info size={16} />
                           <span>
                             Zbylo k rozdělení: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> rovným dílem mezi {unmodifiedCount} os.
                           </span>
@@ -1001,15 +1065,15 @@ function App() {
                     </div>
                   )}
 
-                  <div style={{ marginTop: 30 }}>
+                  <div style={{ marginTop: 24 }}>
                     <button 
                       type="button" 
                       className="btn-racing btn-racing-cyan"
                       onClick={handleFinishTrip}
                       disabled={!isTripValid()}
                     >
-                      <PixelFlag size={22} />
-                      <span>CÍLOVÁ ROVINKA (FINISH)</span>
+                      <Flag size={18} />
+                      <span>DOKONČIT A ZOBRAZIT QR PLATBY</span>
                     </button>
                   </div>
                 </div>
@@ -1019,30 +1083,30 @@ function App() {
 
           {currentScreen === 'summary' && summaryData && (
             <div className="fade-in">
-              <div className="racing-card" style={{ borderColor: 'var(--accent-cyan)' }}>
-                <h2 className="card-title text-cyan">
-                  <PixelTrophy size={34} style={{ marginRight: 10 }} />
-                  VICTORY LAP / VÝSLEDKY ZÁVODU
+              <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
+                <h2 className="card-title">
+                  <Trophy size={24} style={{ marginRight: 8 }} />
+                  KONEČNÉ ROZÚČTOVÁNÍ JÍZDY
                 </h2>
 
                 <div className="summary-stats">
-                  <div className="stat-box" style={{ borderColor: 'var(--accent-cyan)' }}>
-                    <div className="stat-label">UJETÁ VZDÁLENOST STAGE</div>
-                    <div className="stat-val text-cyan">{summaryData.distanceKm} km</div>
+                  <div className="stat-box">
+                    <div className="stat-label">CELKOVÁ VZDÁLENOST</div>
+                    <div className="stat-val">{summaryData.distanceKm} km</div>
                   </div>
-                  <div className="stat-box" style={{ borderColor: 'var(--accent-cyan)' }}>
-                    <div className="stat-label">TUNING BUDGET CELKEM</div>
-                    <div className="stat-val text-cyan">{summaryData.totalPrice} Kč</div>
+                  <div className="stat-box">
+                    <div className="stat-label">CELKOVÉ NÁKLADY STAGE</div>
+                    <div className="stat-val">{summaryData.totalPrice} Kč</div>
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: 16, border: '4px solid #000', marginBottom: 24 }}>
-                  <div style={{ fontSize: 15, textTransform: 'uppercase', color: 'var(--accent-pink)', marginBottom: 8, fontWeight: 'bold' }}>Detaily trasy (Race Stage)</div>
-                  <div style={{ fontSize: 20, fontWeight: 'bold' }}>
+                <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: 16, border: '1px solid var(--border-color)', borderRadius: '8px', marginBottom: 24 }}>
+                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 'bold' }}>Detaily trasy:</div>
+                  <div style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--volvo-blue)' }}>
                     {summaryData.startPoint} {summaryData.endPoint && <><ArrowRight size={14} style={{ display: 'inline', margin: '0 6px' }} /> {summaryData.endPoint}</>}
                   </div>
                   {summaryData.stops.length > 0 && (
-                    <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 8 }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>
                       Checkpointy: {summaryData.stops.join(', ')}
                     </div>
                   )}
@@ -1055,7 +1119,7 @@ function App() {
                     <input 
                       type="text" 
                       className="form-control" 
-                      placeholder="JDM Touge Run"
+                      placeholder="Norsko Touge Run"
                       value={summaryMsg}
                       onChange={(e) => setSummaryMsg(e.target.value)}
                     />
@@ -1072,9 +1136,9 @@ function App() {
                   </div>
                 </div>
 
-                <h3 className="settings-section-title">
-                  <PixelSave size={30} style={{ marginRight: 8 }} />
-                  PLATEBNÍ QR KÓDY
+                <h3 className="settings-section-title" style={{ marginTop: 32 }}>
+                  <Save size={18} style={{ marginRight: 8 }} />
+                  PLATEBNÍ QR KÓDY PRO MOBILNÍ BANKOVNICTVÍ
                 </h3>
                 
                 {/* QR Codes Grid */}
@@ -1106,8 +1170,8 @@ function App() {
                     className="btn-racing" 
                     onClick={handleResetActiveTrip}
                   >
-                    <PixelCar size={24} />
-                    <span>DALŠÍ ZÁVOD</span>
+                    <Car size={20} />
+                    <span>ZAHÁJIT DALŠÍ JÍZDU</span>
                   </button>
                 </div>
               </div>
@@ -1117,29 +1181,29 @@ function App() {
           {currentScreen === 'settings' && (
             <div className="racing-card fade-in">
               <h2 className="card-title">
-                <PixelWrench size={34} style={{ marginRight: 10 }} />
-                GARAGE & TUNING / NASTAVENÍ
+                <Wrench size={24} style={{ marginRight: 8 }} />
+                GARÁŽ (NASTAVENÍ VOZU A CEN)
               </h2>
 
               {settingsSavedMsg && (
                 <div className="alert-success">
-                  <PixelCheck size={20} style={{ marginRight: 8 }} />
-                  <span>Garáž byla úspěšně vytuněna!</span>
+                  <CheckCircle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
+                  <span>Parametry vozidla byly úspěšně uloženy!</span>
                 </div>
               )}
 
               {/* Warning/Info alert mentioning static environment variables configuration */}
               <div className="alert-info" style={{ marginBottom: 24 }}>
-                <PixelInfo size={20} style={{ marginRight: 8 }} />
+                <Info size={20} style={{ marginRight: 8 }} />
                 <div>
-                  <strong>STATIC PROFILE:</strong> Bankovní spojení a Mapové klíče jsou pevně načteny ze souboru <code>.env</code> na serveru a z bezpečnostních důvodů je nelze měnit v rozhraní.
+                  <strong>ZABEZPEČENÉ ÚDAJE:</strong> Bankovní spojení a Mapové klíče jsou načteny přímo ze souboru <code>.env</code> a nelze je měnit v uživatelském rozhraní.
                 </div>
               </div>
 
               <form onSubmit={handleSaveSettings}>
                 
                 <h3 className="settings-section-title">
-                  <PixelCar size={24} style={{ marginRight: 8 }} />
+                  <Car size={18} style={{ marginRight: 8 }} />
                   PRESETY MOTORU & SPOTŘEBY
                 </h3>
                 <div className="form-grid">
@@ -1163,17 +1227,17 @@ function App() {
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
-                        className={`btn-racing ${settings.fuelType === 'petrol' ? 'btn-racing-cyan' : 'btn-racing-secondary'}`}
+                        className={`btn-racing ${settings.fuelType === 'petrol' ? '' : 'btn-racing-secondary'}`}
                         onClick={() => setSettingsState({ ...settings, fuelType: 'petrol' })}
-                        style={{ padding: '10px 14px', fontSize: 18 }}
+                        style={{ padding: '10px 14px' }}
                       >
                         Benzín
                       </button>
                       <button 
                         type="button" 
-                        className={`btn-racing ${settings.fuelType === 'diesel' ? 'btn-racing-cyan' : 'btn-racing-secondary'}`}
+                        className={`btn-racing ${settings.fuelType === 'diesel' ? '' : 'btn-racing-secondary'}`}
                         onClick={() => setSettingsState({ ...settings, fuelType: 'diesel' })}
-                        style={{ padding: '10px 14px', fontSize: 18 }}
+                        style={{ padding: '10px 14px' }}
                       >
                         Nafta
                       </button>
@@ -1181,10 +1245,10 @@ function App() {
                   </div>
                 </div>
 
-                <h3 className="settings-section-title">VÝCHOZÍ CENY ZDVIHU (KČ/L)</h3>
+                <h3 className="settings-section-title">CENY PALIV NA ČERPACÍ STANICI (KČ/L)</h3>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">Benzín</label>
+                    <label className="form-label">Benzín (Natural 95 / V-Power)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -1199,7 +1263,7 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Nafta</label>
+                    <label className="form-label">Nafta (Diesel / V-Power Diesel)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -1215,14 +1279,14 @@ function App() {
                 </div>
 
                 <h3 className="settings-section-title">
-                  <PixelFlag size={24} style={{ marginRight: 8 }} />
-                  POSÁDKA V GARÁŽI (TEAM MEMORY)
+                  <Flag size={18} style={{ marginRight: 8 }} />
+                  POSÁDKA V PAMĚTI GARÁŽE (TEAM)
                 </h3>
                 <div className="passenger-input-group">
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Přidat jméno jezdce"
+                    placeholder="Přidat jméno spolucestujícího"
                     value={newPassengerName}
                     onChange={(e) => setNewPassengerName(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPassenger())}
@@ -1231,7 +1295,7 @@ function App() {
                     type="button" 
                     className="btn-racing btn-racing-cyan"
                     onClick={handleAddPassenger}
-                    style={{ width: 'auto', padding: '12px 20px', fontSize: 18 }}
+                    style={{ width: 'auto', padding: '10px 20px' }}
                   >
                     PŘIDAT
                   </button>
@@ -1239,8 +1303,8 @@ function App() {
 
                 <div className="passenger-list-box">
                   {settings.passengers.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', padding: 16, fontSize: 14, textAlign: 'center' }}>
-                      Garáž je prázdná. Žádná posádka.
+                    <p style={{ color: 'var(--text-secondary)', padding: 16, fontSize: 13, textAlign: 'center' }}>
+                      Žádní registrovaní cestující.
                     </p>
                   ) : (
                     settings.passengers.map(name => (
@@ -1251,7 +1315,7 @@ function App() {
                           className="btn-delete-passenger"
                           onClick={() => handleDeletePassenger(name)}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     ))
@@ -1260,8 +1324,8 @@ function App() {
 
                 <div style={{ marginTop: 30 }}>
                   <button type="submit" className="btn-racing">
-                    <PixelSave size={24} />
-                    <span>ULOŽIT DO GARÁŽE</span>
+                    <Save size={20} />
+                    <span>ULOŽIT PARAMETRY</span>
                   </button>
                 </div>
 

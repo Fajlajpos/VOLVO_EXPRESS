@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { generateSpaydString } from '../utils/spayd';
-import { Share2, Download, Check } from 'lucide-react';
-import { PixelAlert } from './PixelIcons';
+import { Share2, Download, Check, AlertTriangle } from 'lucide-react';
 
 interface PaymentQrCodeProps {
   amount: number;
@@ -50,7 +49,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         width: 240,
         margin: 2,
         color: {
-          dark: '#0b0716', // Match retro night primary theme color
+          dark: '#003057', // Match Volvo Deep Blue
           light: '#ffffff'
         }
       }, (err) => {
@@ -88,7 +87,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         await navigator.clipboard.writeText(shareText);
         setCopied(true);
         setTimeout(() => setCopied(false), 3000);
-      } catch (err) {
+      } catch {
         alert('Kopírování selhalo.');
       }
     }
@@ -97,15 +96,15 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
   if (error) {
     return (
       <div className="qr-section">
-        <PixelAlert size={36} />
-        <p className="text-accent" style={{ fontSize: 15, fontWeight: 'bold', marginTop: 10 }}>{error}</p>
+        <AlertTriangle size={36} color="var(--accent-red)" />
+        <p className="text-accent" style={{ fontSize: 15, fontWeight: 'bold', marginTop: 10, color: 'var(--accent-red)' }}>{error}</p>
       </div>
     );
   }
 
   return (
     <div className="qr-section fade-in">
-      <h4 style={{ marginBottom: 12, fontSize: 26, textTransform: 'uppercase', color: 'var(--accent-purple)' }}>
+      <h4 style={{ marginBottom: 12, fontSize: 18, textTransform: 'uppercase', color: 'var(--volvo-blue)' }}>
         {name 
           ? `PODÍL: ${name}`
           : 'SPOLEČNÝ PODÍL (ROVNÝ)'
@@ -114,13 +113,13 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
       <div className="qr-canvas-wrapper">
         <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }}></canvas>
       </div>
-      <p className="text-yellow" style={{ fontSize: 36, fontWeight: 'bold', marginBottom: 16, fontFamily: 'var(--font-display)', textShadow: '2px 2px 0px #000' }}>
+      <p style={{ fontSize: 28, fontWeight: '800', color: 'var(--volvo-blue)', marginBottom: 16 }}>
         {amount.toFixed(2)} Kč
       </p>
       <div className="qr-actions">
         <button type="button" className="btn-racing btn-racing-secondary" onClick={handleShare}>
-          {copied ? <Check size={16} className="text-cyan" /> : <Share2 size={16} />}
-          <span style={{ fontSize: 20 }}>{copied ? 'Kopírováno!' : 'Sdílet'}</span>
+          {copied ? <Check size={16} color="var(--accent-green)" /> : <Share2 size={16} />}
+          <span>{copied ? 'Kopírováno!' : 'Sdílet'}</span>
         </button>
         {dataUrl && (
           <a 
@@ -130,7 +129,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
             style={{ textDecoration: 'none' }}
           >
             <Download size={16} />
-            <span style={{ fontSize: 20 }}>Uložit QR</span>
+            <span>Uložit QR</span>
           </a>
         )}
       </div>
