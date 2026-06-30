@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS: Settings = {
   fuelType: 'petrol',
   petrolPrice: 37,
   dieselPrice: 34,
-  passengers: ['Petr', 'Jana', 'Tomáš', 'Lucie', 'Martin', 'Eva', 'Honza'],
+  passengers: ['Fíla', 'Sam', 'Tomáš', 'Pája', 'Artur', 'Max', 'Ruby'],
 };
 
 export const getSettings = (): Settings => {

@@ -107,7 +107,12 @@ function App() {
       setEndPoint(active.endPoint);
       setStops(active.stops);
       setRoundTrip(active.roundTrip);
-      setTripPassengers(active.passengers);
+      // Sync active trip passengers with savedSettings.passengers to prevent mismatch
+      const syncedPassengers = savedSettings.passengers.map(name => {
+        const existing = active.passengers.find(p => p.name === name);
+        return existing || { name, checked: true, amount: 0, isManual: false };
+      });
+      setTripPassengers(syncedPassengers);
       setDistanceKm(active.distanceKm);
       setIsManualDistance(active.distanceKm > 0 && !active.startPoint);
       
@@ -323,14 +328,17 @@ function App() {
   // Passenger toggle checker
   const handleTogglePassenger = (name: string) => {
     setTripPassengers(prev => {
-      const updated = prev.map(p => {
+      const exists = prev.some(p => p.name === name);
+      if (!exists) {
+        return [...prev, { name, checked: true, amount: 0, isManual: false }];
+      }
+      return prev.map(p => {
         if (p.name === name) {
           // If unchecking, reset manual settings
           return { ...p, checked: !p.checked, isManual: false, amount: 0 };
         }
         return p;
       });
-      return updated;
     });
   };
 
@@ -539,12 +547,11 @@ function App() {
           {isLoggedIn && (
             <button 
               type="button" 
-              className="lang-select-btn" 
+              className="btn-logout" 
               onClick={handleLogout}
-              style={{ borderColor: 'var(--accent-red)', color: 'var(--accent-red)' }}
             >
               <PixelCross size={16} />
-              <span className="hide-mobile" style={{ fontSize: 16, marginLeft: 4 }}>Odhlásit se</span>
+              <span className="hide-mobile">Odhlásit se</span>
             </button>
           )}
         </div>
