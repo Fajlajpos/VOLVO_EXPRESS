@@ -33,12 +33,14 @@ import { PaymentQrCode } from './components/PaymentQrCode';
 import { playVolvoStartupSound } from './utils/engineSound';
 
 function App() {
+  // Video reference for intro video
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   // Volvo Startup Ignition screen state
   const [isIgnited, setIsIgnited] = useState<boolean>(() => {
     return sessionStorage.getItem('engine_ignited') === 'true';
   });
   const [isLoadingSound, setIsLoadingSound] = useState<boolean>(false);
-  const [showVolvoLogo, setShowVolvoLogo] = useState<boolean>(false);
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
 
   // Navigation & Auth
@@ -131,7 +133,7 @@ function App() {
       setIsManualDistance(active.distanceKm > 0 && !active.startPoint);
       
       setCurrentScreen('active-trip');
-      showToast('Rozpracovaná jízda byla načtena z garáže!');
+      showToast('Našli jsme v garáži rozdělanou káru! Nahazujeme předchozí parametry...');
     } else {
       // Initialize trip passengers if no active trip is restored
       setTripPassengers(savedSettings.passengers.map(name => ({
@@ -177,16 +179,9 @@ function App() {
     return import.meta.env.VITE_ORS_API_KEY || '';
   };
 
-  // Ignition sound & loading screen handler
-  const handleIgnition = async () => {
-    setIsLoadingSound(true);
-    // Play startup sound immediately
+  // Helper fallback for audio-only startup (original logic)
+  const triggerFallbackIgnition = () => {
     playVolvoStartupSound();
-
-    // Trigger Volvo Logo drawing animation after starting cranks
-    setTimeout(() => {
-      setShowVolvoLogo(true);
-    }, 300);
 
     // Trigger visual overlay fade out at 4.4 seconds
     setTimeout(() => {
@@ -199,6 +194,35 @@ function App() {
       sessionStorage.setItem('engine_ignited', 'true');
     }, 5000);
   };
+
+  // Ignition sound & loading screen handler
+  const handleIgnition = async () => {
+    setIsLoadingSound(true);
+
+    if (videoRef.current) {
+      videoRef.current.play()
+        .then(() => {
+          console.log("Video playback started successfully.");
+        })
+        .catch(err => {
+          console.warn("Video play blocked or failed. Running fallback audio ignition...", err);
+          triggerFallbackIgnition();
+        });
+    } else {
+      triggerFallbackIgnition();
+    }
+  };
+
+  const handleVideoEnded = () => {
+    setIsFadingOut(true);
+    setTimeout(() => {
+      setIsIgnited(true);
+      sessionStorage.setItem('engine_ignited', 'true');
+    }, 600);
+  };
+
+
+
 
   // Auth Handlers
   const handleLogin = (e: React.FormEvent) => {
@@ -541,29 +565,33 @@ function App() {
     return (
       <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
         <div className="ignition-card-center">
-          <h1 className="ignition-title">VOLVO EXPRESS</h1>
-          <p className="ignition-subtitle">Touge Run Expense Division</p>
+          <h1 className="ignition-title">SÁREK EXPRESS</h1>
+          <p className="ignition-subtitle">Rychle, zběsile a spravedlivě (Touge Expense Division)</p>
           
-          <div className={`volvo-logo-container ${showVolvoLogo ? 'show-logo' : ''}`}>
-            <img 
-              src="/volvo_logo.png" 
-              alt="Volvo Logo" 
-              className={`volvo-logo-png ${isLoadingSound ? 'engine-start' : ''}`}
+          <div className="ignition-video-container">
+            <video
+              ref={videoRef}
+              src="/SAREK EXPRESS INTRO.mp4"
+              className="ignition-video"
+              playsInline
+              preload="auto"
+              onEnded={handleVideoEnded}
             />
+            {!isLoadingSound && (
+              <button 
+                type="button" 
+                className="ignition-button-overlay" 
+                onClick={handleIgnition}
+              >
+                <KeyRound size={28} />
+                <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
+              </button>
+            )}
           </div>
 
-          {!isLoadingSound ? (
-            <button 
-              type="button" 
-              className="ignition-button" 
-              onClick={handleIgnition}
-            >
-              <KeyRound size={32} />
-              <span style={{ marginTop: 4 }}>NASTARTOVAT</span>
-            </button>
-          ) : (
+          {isLoadingSound && (
             <div style={{ marginTop: 20, color: 'var(--volvo-blue)', fontWeight: '700', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Startování motoru...
+              Tlakujeme turbo a startujeme pětiválec... (Vroom vroom)
             </div>
           )}
         </div>
@@ -601,10 +629,9 @@ function App() {
       {/* Main Header */}
       <header className="app-header">
         <div className="brand" onClick={() => isLoggedIn && setCurrentScreen('active-trip')}>
-          <Car size={36} className="brand-icon" />
           <div className="brand-text">
-            <h1>VOLVO EXPRESS</h1>
-            <p>TOUGE RUN EXPENSE DIVISION</p>
+            <h1>SÁREK EXPRESS</h1>
+            <p>RYCHLE, ZBĚSILE A SPRAVEDLIVĚ (EXPENSE DIVISION)</p>
           </div>
         </div>
 
@@ -617,7 +644,7 @@ function App() {
               onClick={handleLogout}
             >
               <X size={16} />
-              <span className="hide-mobile">Odhlásit se</span>
+              <span className="hide-mobile">Odejít z kokpitu (Odhlásit se)</span>
             </button>
           )}
         </div>
@@ -629,19 +656,19 @@ function App() {
           <div className="racing-card login-card fade-in">
             <h2 className="card-title">
               <KeyRound size={22} style={{ marginRight: 8 }} />
-              START MOTORU / PŘIHLÁŠENÍ
+              KLÍČKY DO ZAPALOVÁNÍ / AUTORIZACE PILOTA
             </h2>
             
             {loginError && (
               <div className="login-error">
                 <AlertTriangle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
-                <span>CHYBA: NESPRÁVNÝ E-MAIL NEBO HESLO!</span>
+                <span>Chyba! Klíček nepasuje, nebo jsi moc opilý na řízení (nesprávný e-mail/heslo)!</span>
               </div>
             )}
 
             <form onSubmit={handleLogin}>
               <div className="form-group">
-                <label className="form-label">E-mail řidiče</label>
+                <label className="form-label">E-mail kapitána korábu</label>
                 <input 
                   type="email" 
                   className="form-control" 
@@ -653,7 +680,7 @@ function App() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Heslo</label>
+                <label className="form-label">Kód k tajnému raketovému pohonu (heslo)</label>
                 <input 
                   type="password" 
                   className="form-control" 
@@ -666,7 +693,7 @@ function App() {
 
               <button type="submit" className="btn-racing">
                 <KeyRound size={20} />
-                <span>PŘIHLÁSIT SE</span>
+                <span>SEŠLÁPNOUT PLYN (PŘIHLÁSIT SE)</span>
               </button>
             </form>
           </div>
@@ -682,7 +709,7 @@ function App() {
               onClick={() => setCurrentScreen('active-trip')}
             >
               <Compass size={18} style={{ marginRight: 6 }} />
-              Jízda (Stage)
+              Měřená Erzeta (Stage)
             </button>
 
             <button 
@@ -691,7 +718,7 @@ function App() {
               onClick={() => setCurrentScreen('settings')}
             >
               <Wrench size={18} style={{ marginRight: 6 }} />
-              Garáž (Tuning)
+              Servis & Garáž (Tuning)
             </button>
           </nav>
 
@@ -702,7 +729,7 @@ function App() {
               <div className="racing-card">
                 <h3 className="card-title">
                   <Flag size={22} style={{ marginRight: 8 }} />
-                  AKTIVNÍ ERZETA (STAGE)
+                  TRASA PRO DNEŠNÍ ZÁVOD
                 </h3>
                 
                 {routingError && (
@@ -713,12 +740,12 @@ function App() {
                 )}
 
                 <div className="form-group">
-                  <label className="form-label">START (Odkud)</label>
+                  <label className="form-label">STARTOVNÍ ČÁRA (Odkud)</label>
                   <div className="autocomplete-wrapper">
                     <input 
                       type="text" 
                       className="form-control" 
-                      placeholder="Místo startu" 
+                      placeholder="Kde startujeme motory?" 
                       value={startPoint}
                       onChange={(e) => {
                         setStartPoint(e.target.value);
@@ -744,13 +771,13 @@ function App() {
                 {/* Waypoints Stops List */}
                 {stops.map((stop, idx) => (
                   <div className="form-group fade-in" key={idx}>
-                    <label className="form-label">CHECKPOINT #{idx + 1}</label>
+                    <label className="form-label">MEZIČAS #{idx + 1} (Průjezdní bod)</label>
                     <div className="stopover-item">
                       <div className="autocomplete-wrapper" style={{ flex: 1 }}>
                         <input 
                           type="text" 
                           className="form-control" 
-                          placeholder="Checkpoint na trase" 
+                          placeholder="Kudy to střihneme?" 
                           value={stop}
                           onChange={(e) => {
                             const next = [...stops];
@@ -792,17 +819,17 @@ function App() {
                     style={{ padding: '8px 16px', width: 'auto' }}
                   >
                     <Flag size={16} />
-                    <span style={{ fontSize: '14px' }}>PŘIDAT CHECKPOINT</span>
+                    <span style={{ fontSize: '14px' }}>PŘIDAT ZASTÁVKU NA PIVO/KAFE</span>
                   </button>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">CÍL (Kam)</label>
+                  <label className="form-label">ŠACHOVNICOVÁ VLAJKA (Kam)</label>
                   <div className="autocomplete-wrapper">
                     <input 
                       type="text" 
                       className="form-control" 
-                      placeholder="Cílová destinace" 
+                      placeholder="Kde budeme slavit přežití?" 
                       value={endPoint}
                       onChange={(e) => {
                         setEndPoint(e.target.value);
@@ -828,7 +855,7 @@ function App() {
                 {/* Round Trip Toggle & Routing Trigger */}
                 <div className="form-grid" style={{ marginBottom: 20 }}>
                   <div>
-                    <label className="form-label">Mód jízdy</label>
+                    <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
@@ -836,7 +863,7 @@ function App() {
                         onClick={() => setRoundTrip(false)}
                         style={{ padding: '10px 14px' }}
                       >
-                        Jednosměrná
+                        Jen tam (Single run)
                       </button>
                       <button 
                         type="button" 
@@ -844,7 +871,7 @@ function App() {
                         onClick={() => setRoundTrip(true)}
                         style={{ padding: '10px 14px' }}
                       >
-                        Zpáteční
+                        Tam a zpět (Double loop)
                       </button>
                     </div>
                   </div>
@@ -857,7 +884,7 @@ function App() {
                       disabled={isCalculating}
                     >
                       <Compass size={18} />
-                      <span>{isCalculating ? 'Vypočítávám...' : 'VYPOČÍTAT TRASU'}</span>
+                      <span>{isCalculating ? 'Žhavíme navigátora...' : 'SPOČÍTAT TRASU (GPS satelit)'}</span>
                     </button>
                   </div>
                 </div>
@@ -869,15 +896,15 @@ function App() {
                       <div className="nitro-fill" style={{ width: '85%' }}></div>
                     </div>
                     <div className="nitro-label">
-                      <span>Routování trasy</span>
-                      <span>Vyhledávám optimální cestu...</span>
+                      <span>GPS VSTŘIKOVÁNÍ</span>
+                      <span>Hledáme zkratky přes pole a lesy...</span>
                     </div>
                   </div>
                 )}
 
                 <div className="form-grid m-t-20">
                   <div className="form-group">
-                    <label className="form-label">DÉLKA TRASY (KILOMETRY)</label>
+                    <label className="form-label">UJETÁ VZDÁLENOST (Kolik km podvozek zaplakal)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -895,7 +922,7 @@ function App() {
                   {isManualDistance && (
                     <div className="alert-info" style={{ marginTop: 10 }}>
                       <Info size={16} />
-                      <span>Délka trasy je zadána ručně.</span>
+                      <span>Vzdálenost zadána ručně. Snad si nevymýšlíš!</span>
                     </div>
                   )}
                 </div>
@@ -903,15 +930,15 @@ function App() {
                 {/* Info block displaying current calculation preset from settings */}
                 <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: 16, marginTop: 16 }}>
                   <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--volvo-blue)', fontWeight: 'bold', marginBottom: 4 }}>
-                    Aktivní parametry z nastavení:
+                    Aktivní parametry z tvé garáže:
                   </div>
                   <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>
-                    Spotřeba vozu: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.avgConsumption} l/100km</strong> | 
-                    Palivo: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? 'Benzín' : 'Nafta'}</strong> | 
-                    Aktuální cena: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice} Kč/l</strong>
+                    Apetit téhle bestie: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.avgConsumption} l/100km</strong> | 
+                    Hnací médium: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? 'Benzín' : 'Nafta'}</strong> | 
+                    Tekuté zlato: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice} Kč/l</strong>
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>
-                    Pro úpravu cen, spotřeby nebo typu paliva přejděte do záložky "Garáž (Tuning)".
+                    Pokud ti to žere víc nebo tě pumpa natáhla, uprav to v Garáži.
                   </div>
                 </div>
 
@@ -922,7 +949,7 @@ function App() {
                     onClick={handleResetActiveTrip}
                   >
                     <X size={18} />
-                    <span>VYMAZAT STATE</span>
+                    <span>SEŠROTOVAT JÍZDU (Smazat data)</span>
                   </button>
                 </div>
               </div>
@@ -932,12 +959,12 @@ function App() {
                 <div className="racing-card">
                   <h3 className="card-title">
                     <Flag size={22} style={{ marginRight: 8 }} />
-                    Posádka v autě (Team)
+                    Kdo přežil tuhle divočinu? (Posádka)
                   </h3>
                   
                   {settings.passengers.length === 0 ? (
                     <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-                      Žádní cestující v paměti nastavení. Přidejte je nejprve v záložce Nastavení.
+                      V autě nikdo nesedí? Takhle za palivo neušetříš! Zajeď do Garáže a naber lidi.
                     </p>
                   ) : (
                     <div className="passenger-grid">
@@ -965,7 +992,7 @@ function App() {
                   {activeChecked.length === 0 && (
                     <div className="alert-warning" style={{ margin: '15px 0 0 0' }}>
                       <AlertTriangle size={18} />
-                      <span>Označte alespoň jednoho spolucestujícího!</span>
+                      <span>Nemůžeš jet sám, kdo by navigoval nebo ti podával chipsy?</span>
                     </div>
                   )}
                 </div>
@@ -973,16 +1000,16 @@ function App() {
                 <div className="racing-card">
                   <h3 className="card-title">
                     <Trophy size={22} style={{ marginRight: 8 }} />
-                    ROZDĚLENÍ NÁKLADŮ
+                    DAŇOVÝ VÝMĚR (Vyúčtování)
                   </h3>
 
                   <div className="summary-stats">
                     <div className="stat-box">
-                      <div className="stat-label">CELKOVÉ NÁKLADY JÍZDY</div>
+                      <div className="stat-label">ÚČET ZA BENZÍNKU (Celkem)</div>
                       <div className="stat-val">{totalPrice} Kč</div>
                     </div>
                     <div className="stat-box">
-                      <div className="stat-label">ZÁKLADNÍ PODÍL / OSOBA</div>
+                      <div className="stat-label">DAŇ ZA PŘEŽITÍ (Na osobu)</div>
                       <div className="stat-val">{equalShareDisplay} Kč</div>
                     </div>
                   </div>
@@ -991,7 +1018,7 @@ function App() {
                   {activeChecked.length > 0 && (
                     <div style={{ marginTop: 20 }}>
                       <div className="flex-between">
-                        <h4 style={{ fontSize: 16, color: 'var(--volvo-blue)', fontWeight: '700' }}>ÚPRAVA PODÍLŮ POSÁDKY</h4>
+                        <h4 style={{ fontSize: 16, color: 'var(--volvo-blue)', fontWeight: '700' }}>VÝPALNÉ A SPECIÁLNÍ TARIFY</h4>
                         <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-secondary)', fontWeight: '500' }}>
                           <input 
                             type="checkbox" 
@@ -999,23 +1026,23 @@ function App() {
                             onChange={(e) => setShouldRound(e.target.checked)}
                             style={{ accentColor: 'var(--volvo-blue)', width: 15, height: 15 }}
                           />
-                          Zaokrouhlovat podíly
+                          Zaokrouhlovat (Ať nemusíme vracet drobné)
                         </label>
                       </div>
 
                       {sumManuals > totalPrice && (
                         <div className="alert-warning" style={{ margin: '12px 0' }}>
                           <AlertTriangle size={16} />
-                          <span>Překročen celkový rozpočet jízdy! Upravte podíly.</span>
+                          <span>Bacha! Rozdělil jsi víc peněz, než kolik ta jízda vůbec stála. Takhle nezbohatneme!</span>
                         </div>
                       )}
 
                       <table className="split-table">
                         <thead>
                           <tr>
-                            <th>Řidič / Posádka</th>
-                            <th style={{ textAlign: 'right' }}>Podíl (Kč)</th>
-                            <th style={{ textAlign: 'center' }}>Mód</th>
+                            <th>Spolupachatel</th>
+                            <th style={{ textAlign: 'right' }}>Dluh (Kč)</th>
+                            <th style={{ textAlign: 'center' }}>Jak platí</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1037,7 +1064,7 @@ function App() {
                                       className="btn-remove-stop"
                                       onClick={() => handleResetManualAmount(p.name)}
                                       style={{ padding: 6, marginLeft: 4 }}
-                                      title="Reset na rovný podíl"
+                                      title="Zpět na rovný podíl"
                                     >
                                       <Trash2 size={12} />
                                     </button>
@@ -1046,7 +1073,7 @@ function App() {
                               </td>
                               <td style={{ textAlign: 'center' }}>
                                 <span className={`split-badge ${p.isManual ? 'manual' : 'equal'}`}>
-                                  {p.isManual ? 'Ruční' : 'Rovný'}
+                                  {p.isManual ? 'VIP taxa' : 'Běžný smrtelník'}
                                 </span>
                               </td>
                             </tr>
@@ -1058,7 +1085,7 @@ function App() {
                         <div className="alert-info" style={{ marginTop: 15 }}>
                           <Info size={16} />
                           <span>
-                            Zbylo k rozdělení: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> rovným dílem mezi {unmodifiedCount} os.
+                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> spravedlivě mezi {unmodifiedCount} chudáků.
                           </span>
                         </div>
                       )}
@@ -1073,7 +1100,7 @@ function App() {
                       disabled={!isTripValid()}
                     >
                       <Flag size={18} />
-                      <span>DOKONČIT A ZOBRAZIT QR PLATBY</span>
+                      <span>VYSTAVIT ÚČTENKY A UKÁZAT QR KÓDY</span>
                     </button>
                   </div>
                 </div>
@@ -1086,28 +1113,28 @@ function App() {
               <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
                 <h2 className="card-title">
                   <Trophy size={24} style={{ marginRight: 8 }} />
-                  KONEČNÉ ROZÚČTOVÁNÍ JÍZDY
+                  KDO KOLIK CÁLUJE (Finální účtenka)
                 </h2>
 
                 <div className="summary-stats">
                   <div className="stat-box">
-                    <div className="stat-label">CELKOVÁ VZDÁLENOST</div>
+                    <div className="stat-label">CELKEM UJETÝCH KILOMETRŮ</div>
                     <div className="stat-val">{summaryData.distanceKm} km</div>
                   </div>
                   <div className="stat-box">
-                    <div className="stat-label">CELKOVÉ NÁKLADY STAGE</div>
+                    <div className="stat-label">CELKOVÁ ÚTRATA ZA BENZÍN</div>
                     <div className="stat-val">{summaryData.totalPrice} Kč</div>
                   </div>
                 </div>
 
                 <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: 16, border: '1px solid var(--border-color)', borderRadius: '8px', marginBottom: 24 }}>
-                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 'bold' }}>Detaily trasy:</div>
+                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 'bold' }}>Kudy jsme letěli:</div>
                   <div style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--volvo-blue)' }}>
                     {summaryData.startPoint} {summaryData.endPoint && <><ArrowRight size={14} style={{ display: 'inline', margin: '0 6px' }} /> {summaryData.endPoint}</>}
                   </div>
                   {summaryData.stops.length > 0 && (
                     <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>
-                      Checkpointy: {summaryData.stops.join(', ')}
+                      Kde jsme dělali bordel (Zastávky): {summaryData.stops.join(', ')}
                     </div>
                   )}
                 </div>
@@ -1115,7 +1142,7 @@ function App() {
                 {/* Optional Message & VS for QR codes */}
                 <div className="form-grid" style={{ marginBottom: 24 }}>
                   <div className="form-group">
-                    <label className="form-label">Zpráva pro příjemce (Název eventu)</label>
+                    <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -1125,7 +1152,7 @@ function App() {
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Variabilní symbol (nepovinné)</label>
+                    <label className="form-label">Variabilní symbol (Pro ty nejvíc pořádkumilovné)</label>
                     <input 
                       type="number" 
                       className="form-control" 
@@ -1138,7 +1165,7 @@ function App() {
 
                 <h3 className="settings-section-title" style={{ marginTop: 32 }}>
                   <Save size={18} style={{ marginRight: 8 }} />
-                  PLATEBNÍ QR KÓDY PRO MOBILNÍ BANKOVNICTVÍ
+                  PLATEBNÍ RAKETY (Naskenuj a plať, než tě příště nevezmeme)
                 </h3>
                 
                 {/* QR Codes Grid */}
@@ -1147,7 +1174,7 @@ function App() {
                   {showSharedQr && (
                     <PaymentQrCode 
                       amount={equalShareDisplay}
-                      message={summaryMsg || 'VOLVO EXPRESS'}
+                      message={summaryMsg || 'SÁREK EXPRESS'}
                       vs={summaryVs}
                     />
                   )}
@@ -1158,7 +1185,7 @@ function App() {
                       key={p.name}
                       amount={p.amount || 0}
                       name={p.name}
-                      message={summaryMsg || 'VOLVO EXPRESS'}
+                      message={summaryMsg || 'SÁREK EXPRESS'}
                       vs={summaryVs}
                     />
                   ))}
@@ -1171,7 +1198,7 @@ function App() {
                     onClick={handleResetActiveTrip}
                   >
                     <Car size={20} />
-                    <span>ZAHÁJIT DALŠÍ JÍZDU</span>
+                    <span>DOPLNIT NITRO A NASTARTOVAT ZNOVU</span>
                   </button>
                 </div>
               </div>
@@ -1182,13 +1209,13 @@ function App() {
             <div className="racing-card fade-in">
               <h2 className="card-title">
                 <Wrench size={24} style={{ marginRight: 8 }} />
-                GARÁŽ (NASTAVENÍ VOZU A CEN)
+                TUNING GARÁŽ (Konfigurace stroje)
               </h2>
 
               {settingsSavedMsg && (
                 <div className="alert-success">
                   <CheckCircle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
-                  <span>Parametry vozidla byly úspěšně uloženy!</span>
+                  <span>Motor naladěn, ventily seřízeny, uloženo do paměti!</span>
                 </div>
               )}
 
@@ -1196,7 +1223,7 @@ function App() {
               <div className="alert-info" style={{ marginBottom: 24 }}>
                 <Info size={20} style={{ marginRight: 8 }} />
                 <div>
-                  <strong>ZABEZPEČENÉ ÚDAJE:</strong> Bankovní spojení a Mapové klíče jsou načteny přímo ze souboru <code>.env</code> a nelze je měnit v uživatelském rozhraní.
+                  <strong>TUTY RYCHLÝ DATA NEUPRAVÍŠ:</strong> Číslo účtu a tajné klíče taháme ze zašifrovaného kufru (.env), do kterého ti nic není!
                 </div>
               </div>
 
@@ -1204,11 +1231,11 @@ function App() {
                 
                 <h3 className="settings-section-title">
                   <Car size={18} style={{ marginRight: 8 }} />
-                  PRESETY MOTORU & SPOTŘEBY
+                  PRESETY MOTORU A CHUŤ K JÍDLU
                 </h3>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">Průměrná spotřeba vozu (l/100 km)</label>
+                    <label className="form-label">Jak moc ta bestie chlastá (Průměrná spotřeba)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -1223,7 +1250,7 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Typ paliva</label>
+                    <label className="form-label">Co teče do nádrže</label>
                     <div style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
@@ -1245,10 +1272,10 @@ function App() {
                   </div>
                 </div>
 
-                <h3 className="settings-section-title">CENY PALIV NA ČERPACÍ STANICI (KČ/L)</h3>
+                <h3 className="settings-section-title">KREJCARŮ ZA LITR PALIVA (Benzínka)</h3>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">Benzín (Natural 95 / V-Power)</label>
+                    <label className="form-label">Benzínový nektar (Kč/l)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -1263,7 +1290,7 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Nafta (Diesel / V-Power Diesel)</label>
+                    <label className="form-label">Naftová ropa (Kč/l)</label>
                     <div className="input-with-suffix">
                       <input 
                         type="number" 
@@ -1280,13 +1307,13 @@ function App() {
 
                 <h3 className="settings-section-title">
                   <Flag size={18} style={{ marginRight: 8 }} />
-                  POSÁDKA V PAMĚTI GARÁŽE (TEAM)
+                  KARTOTÉKA SPOLUJEZDCŮ (Paměť)
                 </h3>
                 <div className="passenger-input-group">
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Přidat jméno spolucestujícího"
+                    placeholder="Jméno další oběti"
                     value={newPassengerName}
                     onChange={(e) => setNewPassengerName(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPassenger())}
@@ -1297,14 +1324,14 @@ function App() {
                     onClick={handleAddPassenger}
                     style={{ width: 'auto', padding: '10px 20px' }}
                   >
-                    PŘIDAT
+                    PŘIBRAT DO AUTO
                   </button>
                 </div>
 
                 <div className="passenger-list-box">
                   {settings.passengers.length === 0 ? (
                     <p style={{ color: 'var(--text-secondary)', padding: 16, fontSize: 13, textAlign: 'center' }}>
-                      Žádní registrovaní cestující.
+                      Garáž zeje prázdnotou, nikoho tu nemáš.
                     </p>
                   ) : (
                     settings.passengers.map(name => (
@@ -1325,7 +1352,7 @@ function App() {
                 <div style={{ marginTop: 30 }}>
                   <button type="submit" className="btn-racing">
                     <Save size={20} />
-                    <span>ULOŽIT PARAMETRY</span>
+                    <span>ZAMKNOUT TUNING (Uložit)</span>
                   </button>
                 </div>
 
@@ -1340,3 +1367,4 @@ function App() {
 }
 
 export default App;
+

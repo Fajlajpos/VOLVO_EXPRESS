@@ -55,7 +55,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
       }, (err) => {
         if (err) {
           console.error(err);
-          setError('Nepodařilo se vygenerovat QR kód.');
+          setError('Chyba generování QR kódu... Radši zaplať hotově!');
         } else {
           if (canvasRef.current) {
             setDataUrl(canvasRef.current.toDataURL('image/png'));
@@ -69,13 +69,13 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
 
   const handleShare = async () => {
     const shareText = name 
-      ? `Ahoj, posílám podíl za cestu: ${amount.toFixed(2)} Kč na účet ${bankAccount}. Zpráva: ${message} - ${name}`
-      : `Ahoj, posílám společný podíl za cestu: ${amount.toFixed(2)} Kč na účet ${bankAccount}. Zpráva: ${message}`;
+      ? `Čau! Posílám výpalné za divokou jízdu se Sárek Expressem. Můj dluh dělá: ${amount.toFixed(2)} Kč. Pošli to na účet ${bankAccount} se zprávou: ${message} - ${name}`
+      : `Čau! Posílám náš společný dluh za palivo ze Sárek Expressu. Každý cáluje: ${amount.toFixed(2)} Kč na účet ${bankAccount} se zprávou: ${message}`;
       
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Platba cesty (VOLVO EXPRESS)',
+          title: 'Výpalné za jízdu (SÁREK EXPRESS)',
           text: shareText,
         });
       } catch (err) {
@@ -106,8 +106,8 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
     <div className="qr-section fade-in">
       <h4 style={{ marginBottom: 12, fontSize: 18, textTransform: 'uppercase', color: 'var(--volvo-blue)' }}>
         {name 
-          ? `PODÍL: ${name}`
-          : 'SPOLEČNÝ PODÍL (ROVNÝ)'
+          ? `VIP DLUŽNÍK: ${name}`
+          : 'SPOLEČNÉ CÁLOVÁNÍ (ROVNÝ)'
         }
       </h4>
       <div className="qr-canvas-wrapper">
@@ -119,7 +119,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
       <div className="qr-actions">
         <button type="button" className="btn-racing btn-racing-secondary" onClick={handleShare}>
           {copied ? <Check size={16} color="var(--accent-green)" /> : <Share2 size={16} />}
-          <span>{copied ? 'Kopírováno!' : 'Sdílet'}</span>
+          <span>{copied ? 'Kopírováno!' : 'Sdílet dluh'}</span>
         </button>
         {dataUrl && (
           <a 
@@ -129,7 +129,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
             style={{ textDecoration: 'none' }}
           >
             <Download size={16} />
-            <span>Uložit QR</span>
+            <span>Stáhnout QR</span>
           </a>
         )}
       </div>
