@@ -566,16 +566,19 @@ function App() {
       <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
         <div className="ignition-card-center">
           <h1 className="ignition-title">SÁREK EXPRESS</h1>
-          <p className="ignition-subtitle">Rychle, zběsile a spravedlivě (Touge Expense Division)</p>
+          <p className="ignition-subtitle">Rychle, zběsile a spravedlivě <span className="hide-mobile">(Touge Expense Division)</span></p>
           
-          <div className="ignition-video-container">
+          <div className="ignition-video-container" onContextMenu={(e) => e.preventDefault()}>
             <video
               ref={videoRef}
-              src="/SAREK EXPRESS INTRO.mp4"
+              src="/0701.mp4"
               className="ignition-video"
               playsInline
+              disablePictureInPicture
+              controlsList="nodownload nofullscreen noremoteplayback"
               preload="auto"
               onEnded={handleVideoEnded}
+              onContextMenu={(e) => e.preventDefault()}
             />
             {!isLoadingSound && (
               <button 
@@ -709,7 +712,7 @@ function App() {
               onClick={() => setCurrentScreen('active-trip')}
             >
               <Compass size={18} style={{ marginRight: 6 }} />
-              Měřená Erzeta (Stage)
+              <span>Měřená Erzeta <span className="hide-mobile">(Stage)</span></span>
             </button>
 
             <button 
@@ -718,7 +721,7 @@ function App() {
               onClick={() => setCurrentScreen('settings')}
             >
               <Wrench size={18} style={{ marginRight: 6 }} />
-              Servis & Garáž (Tuning)
+              <span>Servis & Garáž <span className="hide-mobile">(Tuning)</span></span>
             </button>
           </nav>
 
@@ -728,6 +731,7 @@ function App() {
               {/* Active Trip Left Panel: Config Form */}
               <div className="racing-card">
                 <h3 className="card-title">
+                  <span className="status-indicator"></span>
                   <Flag size={22} style={{ marginRight: 8 }} />
                   TRASA PRO DNEŠNÍ ZÁVOD
                 </h3>
@@ -856,7 +860,7 @@ function App() {
                 <div className="form-grid" style={{ marginBottom: 20 }}>
                   <div>
                     <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
-                    <div style={{ display: 'flex', gap: 10 }}>
+                    <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
                         className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
@@ -958,6 +962,7 @@ function App() {
               <div>
                 <div className="racing-card">
                   <h3 className="card-title">
+                    <span className="status-indicator"></span>
                     <Flag size={22} style={{ marginRight: 8 }} />
                     Kdo přežil tuhle divočinu? (Posádka)
                   </h3>
@@ -1112,6 +1117,7 @@ function App() {
             <div className="fade-in">
               <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
                 <h2 className="card-title">
+                  <span className="status-indicator"></span>
                   <Trophy size={24} style={{ marginRight: 8 }} />
                   KDO KOLIK CÁLUJE (Finální účtenka)
                 </h2>
@@ -1208,6 +1214,7 @@ function App() {
           {currentScreen === 'settings' && (
             <div className="racing-card fade-in">
               <h2 className="card-title">
+                <span className="status-indicator"></span>
                 <Wrench size={24} style={{ marginRight: 8 }} />
                 TUNING GARÁŽ (Konfigurace stroje)
               </h2>
@@ -1251,7 +1258,7 @@ function App() {
 
                   <div className="form-group">
                     <label className="form-label">Co teče do nádrže</label>
-                    <div style={{ display: 'flex', gap: 10 }}>
+                    <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
                       <button 
                         type="button" 
                         className={`btn-racing ${settings.fuelType === 'petrol' ? '' : 'btn-racing-secondary'}`}

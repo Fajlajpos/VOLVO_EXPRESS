@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;800&display=swap');
 
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
-  --border-color: #e2e8f0;
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f8fafc;
+  --border-color: #eef2f6;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
   
@@ -17,7 +17,7 @@
   --accent-cyan-hover: #0369a1;
   --accent-red: #ef4444;
   --accent-red-hover: #dc2626;
-  --accent-green: #22c55e;
+  --accent-green: #10b981;
   
   --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: 'Cinzel', serif;
@@ -31,7 +31,13 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: #ebedf2;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 40%),
+    radial-gradient(at 50% 100%, rgba(2, 132, 199, 0.08) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, rgba(0, 48, 87, 0.06) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-primary);
   font-size: 16px;
@@ -90,7 +96,7 @@ p, span, label, input, button, table, select, textarea {
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   margin-bottom: 30px;
 }
 
@@ -135,12 +141,15 @@ p, span, label, input, button, table, select, textarea {
 /* Modern Tab Navigation */
 .app-nav {
   display: flex;
-  background-color: var(--bg-tertiary);
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 12px;
   padding: 4px;
   margin-bottom: 30px;
   gap: 4px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 24px rgba(0, 0, 0, 0.03);
 }
 
 .nav-tab {
@@ -156,47 +165,80 @@ p, span, label, input, button, table, select, textarea {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: 9px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-tab:hover {
   color: var(--volvo-blue);
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(255, 255, 255, 0.25);
 }
 
 .nav-tab.active {
   color: var(--volvo-blue);
-  background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 48, 87, 0.05);
 }
 
 /* Premium Card Layout */
 .racing-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 28px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 32px;
   margin-bottom: 30px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    0 12px 40px 0 rgba(0, 0, 0, 0.03),
+    0 1px 3px 0 rgba(0, 0, 0, 0.02);
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .racing-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    0 20px 50px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* Clean Brand Corner Accent */
-.racing-card::after {
+/* Status Indicator LED Pulse */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-green);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 8px var(--accent-green);
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.status-indicator::after {
   content: '';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 4px;
-  background-color: var(--volvo-blue);
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--accent-green);
+  border-radius: 50%;
+  animation: pulse-led 2s infinite ease-out;
+  opacity: 0;
+}
+
+@keyframes pulse-led {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(2.2); opacity: 0; }
 }
 
 .card-title {
@@ -230,19 +272,23 @@ p, span, label, input, button, table, select, textarea {
 
 .form-control {
   width: 100%;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   color: var(--text-primary);
-  padding: 10px 14px;
+  padding: 11px 16px;
   font-size: 15px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: var(--volvo-blue);
-  box-shadow: 0 0 0 3px rgba(0, 48, 87, 0.1);
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 48, 87, 0.5);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 0 0 4px rgba(0, 48, 87, 0.08);
 }
 
 .input-with-suffix {
@@ -270,91 +316,132 @@ p, span, label, input, button, table, select, textarea {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--volvo-blue);
+  background-color: rgba(0, 48, 87, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: #ffffff;
-  border: 1px solid var(--volvo-blue);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px 24px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 4px 15px rgba(0, 48, 87, 0.1);
   width: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: none;
 }
 
 .btn-racing:hover:not(:disabled) {
-  background-color: var(--volvo-blue-hover);
-  border-color: var(--volvo-blue-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 48, 87, 0.85);
+  transform: scale(1.02);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    0 8px 20px rgba(0, 48, 87, 0.2);
 }
 
 .btn-racing:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: scale(0.97);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-racing:disabled {
-  background: #e2e8f0;
+  background: rgba(226, 232, 240, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #94a3b8;
-  border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, 0.3);
   box-shadow: none;
   cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-racing-secondary {
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--text-primary);
-  border-color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
 }
 
 .btn-racing-secondary:hover:not(:disabled) {
-  background-color: var(--bg-secondary);
-  border-color: #94a3b8;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: scale(1.02);
+}
+
+.btn-racing-secondary:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-racing-cyan {
-  background-color: var(--accent-cyan);
-  border-color: var(--accent-cyan);
+  background-color: rgba(2, 132, 199, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
 }
 
 .btn-racing-cyan:hover:not(:disabled) {
-  background-color: var(--accent-cyan-hover);
-  border-color: var(--accent-cyan-hover);
+  background-color: rgba(2, 132, 199, 0.85);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: scale(1.02);
+}
+
+.btn-racing-cyan:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-racing-danger {
-  background-color: var(--accent-red);
-  border-color: var(--accent-red);
+  background-color: rgba(239, 68, 68, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #ffffff;
+  border-radius: 12px;
 }
 
 .btn-racing-danger:hover:not(:disabled) {
-  background-color: var(--accent-red-hover);
-  border-color: var(--accent-red-hover);
+  background-color: rgba(239, 68, 68, 0.85);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: scale(1.02);
+}
+
+.btn-racing-danger:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-logout {
-  background: none;
-  border: 1px solid #cbd5e1;
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   color: var(--text-secondary);
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 9px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .btn-logout:hover {
-  background-color: var(--bg-secondary);
+  background-color: rgba(255, 255, 255, 0.6);
   color: var(--text-primary);
-  border-color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: scale(1.03);
+}
+
+.btn-logout:active {
+  transform: scale(0.97);
 }
 
 /* Passenger List Grid */
@@ -367,8 +454,10 @@ p, span, label, input, button, table, select, textarea {
 
 /* Premium Card Checks */
 .passenger-check-card {
-  background-color: #ffffff;
-  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 8px;
   padding: 12px 16px;
   display: flex;
@@ -376,18 +465,18 @@ p, span, label, input, button, table, select, textarea {
   gap: 10px;
   cursor: pointer;
   user-select: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.01);
   transition: all 0.2s ease;
 }
 
 .passenger-check-card:hover {
   border-color: var(--volvo-blue);
-  background-color: var(--volvo-blue-light);
+  background-color: rgba(255, 255, 255, 0.65);
 }
 
 .passenger-check-card.checked {
   border-color: var(--volvo-blue);
-  background-color: var(--volvo-blue-light);
+  background-color: rgba(0, 48, 87, 0.08);
   font-weight: 600;
 }
 
@@ -436,9 +525,10 @@ p, span, label, input, button, table, select, textarea {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 8px;
   overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .split-table th {
@@ -448,15 +538,15 @@ p, span, label, input, button, table, select, textarea {
   color: var(--text-secondary);
   text-transform: uppercase;
   padding: 12px 16px;
-  background-color: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .split-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   font-size: 14px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.25);
 }
 
 .split-table tr:last-child td {
@@ -475,24 +565,25 @@ p, span, label, input, button, table, select, textarea {
 
 .split-amount-input {
   width: 100px;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   color: var(--text-primary);
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   text-align: right;
   font-size: 14px;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .split-amount-input:focus {
   outline: none;
-  border-color: var(--volvo-blue);
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 48, 87, 0.5);
 }
 
 .split-amount-input.manual-active {
   border-color: var(--volvo-blue);
-  background-color: var(--volvo-blue-light);
+  background-color: rgba(0, 48, 87, 0.08);
   color: var(--volvo-blue);
   font-weight: 600;
 }
@@ -525,15 +616,16 @@ p, span, label, input, button, table, select, textarea {
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-top: none;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
   z-index: 50;
   max-height: 180px;
   overflow-y: auto;
-  border-radius: 0 0 6px 6px;
-  margin-top: 2px;
+  border-radius: 12px;
+  margin-top: 6px;
 }
 
 .autocomplete-item {
@@ -549,7 +641,7 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .autocomplete-item:hover {
-  background-color: var(--bg-tertiary);
+  background-color: rgba(0, 48, 87, 0.07);
   color: var(--volvo-blue);
 }
 
@@ -566,22 +658,27 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .btn-remove-stop {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   color: var(--accent-red);
   cursor: pointer;
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-remove-stop:hover {
-  background-color: var(--accent-red);
-  border-color: var(--accent-red);
+  background-color: rgba(239, 68, 68, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-color: rgba(239, 68, 68, 0.5);
   color: #ffffff;
+  transform: scale(1.05);
 }
 
 /* QR Code Summary Screen Layout */
@@ -603,18 +700,20 @@ p, span, label, input, button, table, select, textarea {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background-color: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 0 8px 32px rgba(0, 0, 0, 0.04);
   text-align: center;
 }
 
 .qr-canvas-wrapper {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.9);
   padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
   display: inline-block;
   margin-bottom: 16px;
 }
@@ -633,11 +732,14 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .stat-box {
-  background-color: var(--volvo-blue-light);
+  background-color: rgba(0, 48, 87, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 16px;
-  border: 1px solid rgba(0, 48, 87, 0.1);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
   text-align: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .stat-label {
@@ -669,11 +771,13 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .login-error {
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
+  background-color: rgba(239, 68, 68, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   color: var(--accent-red);
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 10px;
   margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
@@ -687,7 +791,7 @@ p, span, label, input, button, table, select, textarea {
   color: var(--volvo-blue);
   text-transform: uppercase;
   margin: 28px 0 14px 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   padding-bottom: 8px;
   letter-spacing: 0.5px;
 }
@@ -703,11 +807,14 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .passenger-list-box {
-  background-color: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
   max-height: 250px;
   overflow-y: auto;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .passenger-item {
@@ -715,7 +822,7 @@ p, span, label, input, button, table, select, textarea {
   justify-content: space-between;
   align-items: center;
   padding: 10px 16px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   font-size: 14px;
 }
 
@@ -742,22 +849,26 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .alert-success {
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #166534;
-  padding: 12px;
-  border-radius: 6px;
+  background-color: rgba(16, 185, 129, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #065f46;
+  padding: 12px 16px;
+  border-radius: 12px;
   margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
 }
 
 .alert-info {
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  color: #0369a1;
+  background-color: rgba(2, 132, 199, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  color: #0c4a6e;
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: 12px;
   margin-bottom: 20px;
   font-size: 14px;
   display: flex;
@@ -766,11 +877,13 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .alert-warning {
-  background-color: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #b45309;
+  background-color: rgba(245, 158, 11, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #78350f;
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: 12px;
   margin-bottom: 20px;
   font-size: 14px;
   display: flex;
@@ -969,17 +1082,17 @@ p, span, label, input, button, table, select, textarea {
   }
 }
 
-/* Startup Intro Video Styles */
 .ignition-video-container {
   width: 100%;
   max-width: 480px;
   margin: 0 auto 30px auto;
-  background: #000000;
+  background: transparent;
   aspect-ratio: 16 / 9;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .ignition-video {
@@ -987,6 +1100,11 @@ p, span, label, input, button, table, select, textarea {
   height: 100%;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  border: none;
+  outline: none;
 }
 
 /* absolute overlay button centered over the video */
@@ -1034,6 +1152,182 @@ p, span, label, input, button, table, select, textarea {
   border: 1px dashed rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   animation: rotate-dashed 20s linear infinite;
+}
+
+/* --- MOBILE & RESPONSIVENESS CUSTOM OVERRIDES --- */
+
+/* Hide mobile class */
+.hide-mobile {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .app-container {
+    padding: 0 20px;
+  }
+
+  .app-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 0;
+    margin-bottom: 20px;
+  }
+
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .brand-text p {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    white-space: normal;
+    max-width: 200px;
+    line-height: 1.2;
+  }
+
+  .racing-card {
+    padding: 20px 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  /* Stack button flex rows on mobile */
+  .display-flex-mobile-stack,
+  .form-group .display-flex-mobile-stack {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .display-flex-mobile-stack .btn-racing {
+    width: 100% !important;
+  }
+
+  /* Make nav-tabs more compact */
+  .app-nav {
+    gap: 2px;
+    padding: 3px;
+    margin-bottom: 20px;
+  }
+
+  .nav-tab {
+    padding: 8px 10px;
+    font-size: 13px;
+    gap: 4px;
+  }
+
+  .nav-tab svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Form columns grid */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+  
+  /* Split Table responsiveness */
+  .split-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .split-table th, .split-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .split-amount-input {
+    width: 80px;
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+
+  /* QR Summary screen layout spacing */
+  .summary-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-box {
+    padding: 12px;
+  }
+
+  .stat-val {
+    font-size: 26px;
+  }
+
+  .qr-section {
+    padding: 16px;
+  }
+
+  .qr-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .qr-actions .btn-racing {
+    width: 100%;
+  }
+
+  /* Passenger input group on settings page */
+  .passenger-input-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .passenger-input-group .btn-racing {
+    width: 100%;
+  }
+
+  /* Ignition overlay scaling */
+  .ignition-card-center {
+    padding: 20px 12px;
+  }
+
+  .ignition-title {
+    font-size: 26px;
+    letter-spacing: 0.1em;
+  }
+
+  .ignition-subtitle {
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    white-space: normal;
+    padding: 0 8px;
+    line-height: 1.3;
+  }
+
+  .ignition-button {
+    width: 120px;
+    height: 120px;
+    font-size: 12px;
+  }
+
+  .ignition-button-overlay {
+    width: 110px;
+    height: 110px;
+    font-size: 11px;
+  }
 }
 
 
