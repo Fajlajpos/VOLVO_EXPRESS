@@ -23,6 +23,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
 
   // Load bank account from .env
   const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || '';
+  const ownerName = import.meta.env.VITE_BANK_OWNER_NAME || '';
 
   useEffect(() => {
     if (!bankAccount) {
@@ -36,7 +37,8 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         accountNumber: bankAccount,
         amount,
         message: name ? `${message} - ${name}` : message,
-        vs
+        vs,
+        recipientName: ownerName || undefined,
       });
 
       // Clear previous canvas

@@ -227,8 +227,13 @@ function App() {
   // Auth Handlers
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const envEmail = import.meta.env.VITE_LOGIN_EMAIL || 'driver@payway.cz';
-    const envPassword = import.meta.env.VITE_LOGIN_PASSWORD || 'racing-fuel';
+    const envEmail = import.meta.env.VITE_LOGIN_EMAIL || '';
+    const envPassword = import.meta.env.VITE_LOGIN_PASSWORD || '';
+
+    if (!envEmail || !envPassword) {
+      setLoginError(true);
+      return;
+    }
 
     if (email.trim().toLowerCase() === envEmail.toLowerCase() && password === envPassword) {
       setSession(true);
