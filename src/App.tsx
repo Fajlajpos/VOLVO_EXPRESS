@@ -576,7 +576,7 @@ function App() {
           <div className="ignition-video-container" onContextMenu={(e) => e.preventDefault()}>
             <video
               ref={videoRef}
-              src="/0701.mp4"
+              src={`${import.meta.env.BASE_URL}0701.mp4`}
               className="ignition-video"
               playsInline
               disablePictureInPicture

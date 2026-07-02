@@ -5,7 +5,7 @@
 export function playVolvoStartupSound(): Promise<void> {
   return new Promise((resolve) => {
     try {
-      const audio = new Audio('/volvo_startup.mp3');
+      const audio = new Audio(`${import.meta.env.BASE_URL}volvo_startup.mp3`);
       audio.volume = 0.8;
 
       audio.play().then(() => {
