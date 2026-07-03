@@ -197,21 +197,29 @@ function App() {
   };
 
   // Ignition sound & loading screen handler
-  const handleIgnition = async () => {
-    setIsLoadingSound(true);
-
+  const handleIgnition = () => {
     if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.play()
-        .then(() => {
-          console.log("Muted video playback started successfully.");
-          playVolvoStartupSound();
-        })
-        .catch(err => {
-          console.warn("Muted video play blocked or failed. Running fallback audio ignition...", err);
-          triggerFallbackIgnition();
-        });
+      // Unmute the video to play its own audio track
+      videoRef.current.muted = false;
+      
+      // Play synchronously to preserve gesture context on mobile browsers (Safari/Chrome)
+      const playPromise = videoRef.current.play();
+      setIsLoadingSound(true);
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log("Video playback started successfully.");
+          })
+          .catch(err => {
+            console.warn("Video play blocked or failed. Running fallback audio ignition...", err);
+            triggerFallbackIgnition();
+          });
+      } else {
+        console.log("Video playback started (legacy browser).");
+      }
     } else {
+      setIsLoadingSound(true);
       triggerFallbackIgnition();
     }
   };
@@ -611,7 +619,6 @@ function App() {
               src={`${import.meta.env.BASE_URL}0701.mp4`}
               className="ignition-video"
               playsInline
-              muted
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
               preload="auto"
