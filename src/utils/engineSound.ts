@@ -5,11 +5,11 @@
 export function playVolvoStartupSound(): Promise<void> {
   return new Promise((resolve) => {
     try {
-      const audio = new Audio(`${import.meta.env.BASE_URL}volvo_startup.mp3`);
+      const audio = new Audio(`${import.meta.env.BASE_URL}0701_audio.mp3`);
       audio.volume = 0.8;
 
       audio.play().then(() => {
-        // Start fading out the sound after 3.8 seconds
+        // Start fading out the sound after 8.6 seconds (video duration is ~9.87s)
         setTimeout(() => {
           let vol = 0.8;
           const fadeInterval = setInterval(() => {
@@ -23,7 +23,7 @@ export function playVolvoStartupSound(): Promise<void> {
               resolve();
             }
           }, 75); // ~16 steps * 75ms = 1.2s total fade-out duration
-        }, 3800);
+        }, 8600);
       }).catch(err => {
         console.warn('Audio playback failed or was interrupted:', err);
         resolve();

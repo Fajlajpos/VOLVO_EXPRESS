@@ -180,47 +180,48 @@ function App() {
     return import.meta.env.VITE_ORS_API_KEY || '';
   };
 
-  // Helper fallback for audio-only startup (original logic)
-  const triggerFallbackIgnition = () => {
-    playVolvoStartupSound();
-
-    // Trigger visual overlay fade out at 4.4 seconds
+  // Helper to trigger visual transition timers (aligned with 9.87s sound length)
+  const triggerVisualFallbackTimers = () => {
+    // Trigger visual overlay fade out at 9.2 seconds (matching audio duration)
     setTimeout(() => {
       setIsFadingOut(true);
-    }, 4400);
+    }, 9200);
 
-    // Transition overlay out completely at 5.0 seconds
+    // Transition overlay out completely at 9.8 seconds
     setTimeout(() => {
       setIsIgnited(true);
       sessionStorage.setItem('engine_ignited', 'true');
-    }, 5000);
+    }, 9800);
   };
+
+
 
   // Ignition sound & loading screen handler
   const handleIgnition = () => {
+    // 1. Always play the startup soundtrack synchronously inside click event (never blocked!)
+    playVolvoStartupSound();
+    setIsLoadingSound(true);
+
     if (videoRef.current) {
-      // Unmute the video to play its own audio track
-      videoRef.current.muted = false;
-      
-      // Play synchronously to preserve gesture context on mobile browsers (Safari/Chrome)
+      // 2. Play the video MUTED (guaranteed to succeed on all mobile browsers!)
+      videoRef.current.muted = true;
       const playPromise = videoRef.current.play();
-      setIsLoadingSound(true);
 
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            console.log("Video playback started successfully.");
+            console.log("Muted video playback started successfully.");
           })
           .catch(err => {
-            console.warn("Video play blocked or failed. Running fallback audio ignition...", err);
-            triggerFallbackIgnition();
+            console.warn("Muted video play blocked or failed. Running fallback visual transition...", err);
+            // If the video failed, we trigger the visual transition fallback timers
+            triggerVisualFallbackTimers();
           });
       } else {
-        console.log("Video playback started (legacy browser).");
+        console.log("Muted video playback started (legacy browser).");
       }
     } else {
-      setIsLoadingSound(true);
-      triggerFallbackIgnition();
+      triggerVisualFallbackTimers();
     }
   };
 
@@ -620,6 +621,7 @@ function App() {
               src={`${import.meta.env.BASE_URL}0701.mp4`}
               className="ignition-video"
               playsInline
+              muted
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
               preload="auto"
