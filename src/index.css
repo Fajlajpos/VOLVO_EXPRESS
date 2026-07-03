@@ -789,6 +789,54 @@ p, span, label, input, button, table, select, textarea {
   color: var(--volvo-blue);
 }
 
+.btn-round {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.2) 100%);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.btn-round:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
+  border-color: rgba(255, 255, 255, 0.8);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.btn-round:active {
+  transform: translateY(1px);
+}
+
+.btn-round.active {
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.15) 0%, rgba(0, 113, 227, 0.05) 100%);
+  border-color: rgba(0, 113, 227, 0.4);
+  color: var(--volvo-blue);
+  box-shadow: 
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.6),
+    0 4px 12px rgba(0, 113, 227, 0.08);
+}
+
+.btn-round.active:hover {
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.22) 0%, rgba(0, 113, 227, 0.09) 100%);
+  border-color: rgba(0, 113, 227, 0.55);
+}
+
 .split-badge.discount {
   background-color: rgba(52, 199, 89, 0.1);
   color: var(--accent-green);

@@ -12,7 +12,8 @@ import {
   CheckCircle,
   Info,
   X,
-  Compass
+  Compass,
+  Coins
 } from 'lucide-react';
 
 import { 
@@ -626,11 +627,6 @@ function App() {
             )}
           </div>
 
-          {isLoadingSound && (
-            <div style={{ marginTop: 20, color: 'var(--volvo-blue)', fontWeight: '700', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Tlakujeme turbo a startujeme pětiválec... (Vroom vroom)
-            </div>
-          )}
         </div>
       </div>
     );
@@ -965,20 +961,7 @@ function App() {
                   )}
                 </div>
 
-                {/* Info block displaying current calculation preset from settings */}
-                <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: 16, marginTop: 16 }}>
-                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--volvo-blue)', fontWeight: 'bold', marginBottom: 4 }}>
-                    Aktivní parametry z tvé garáže:
-                  </div>
-                  <div style={{ fontSize: 14, color: 'var(--text-primary)' }}>
-                    Apetit téhle bestie: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.avgConsumption} l/100km</strong> | 
-                    Hnací médium: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? 'Benzín' : 'Nafta'}</strong> | 
-                    Tekuté zlato: <strong style={{ color: 'var(--volvo-blue)' }}>{settings.fuelType === 'petrol' ? settings.petrolPrice : settings.dieselPrice} Kč/l</strong>
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>
-                    Pokud ti to žere víc nebo tě pumpa natáhla, uprav to v Garáži.
-                  </div>
-                </div>
+
 
                 <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
                   <button 
@@ -1056,17 +1039,15 @@ function App() {
                   {/* Manual Cost Splits Table */}
                   {activeChecked.length > 0 && (
                     <div style={{ marginTop: 20 }}>
-                      <div className="flex-between">
-                        <h4 style={{ fontSize: 16, color: 'var(--volvo-blue)', fontWeight: '700' }}>VÝPALNÉ A SPECIÁLNÍ TARIFY</h4>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer', color: 'var(--text-secondary)', fontWeight: '500' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={shouldRound} 
-                            onChange={(e) => setShouldRound(e.target.checked)}
-                            style={{ accentColor: 'var(--volvo-blue)', width: 15, height: 15 }}
-                          />
-                          Zaokrouhlovat (Ať nemusíme vracet drobné)
-                        </label>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+                        <button
+                          type="button"
+                          className={`btn-round ${shouldRound ? 'active' : ''}`}
+                          onClick={() => setShouldRound(!shouldRound)}
+                        >
+                          <Coins size={16} />
+                          <span>{shouldRound ? 'Zaokrouhleno (celé Kč)' : 'Zaokrouhlit na celé Kč'}</span>
+                        </button>
                       </div>
 
                       {sumManuals > totalPrice && (
