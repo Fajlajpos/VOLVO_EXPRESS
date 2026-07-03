@@ -789,6 +789,11 @@ p, span, label, input, button, table, select, textarea {
   color: var(--volvo-blue);
 }
 
+.split-badge.discount {
+  background-color: rgba(52, 199, 89, 0.1);
+  color: var(--accent-green);
+}
+
 /* Autocomplete Suggestion Dropdown */
 .autocomplete-wrapper {
   position: relative;

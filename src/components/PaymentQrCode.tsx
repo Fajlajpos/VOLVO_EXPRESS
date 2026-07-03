@@ -108,7 +108,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
     <div className="qr-section fade-in">
       <h4 style={{ marginBottom: 12, fontSize: 18, textTransform: 'uppercase', color: 'var(--volvo-blue)' }}>
         {name 
-          ? `VIP DLUŽNÍK: ${name}`
+          ? (name.startsWith('Běžní') ? name : `VIP DLUŽNÍK: ${name}`)
           : 'SPOLEČNÉ CÁLOVÁNÍ (ROVNÝ)'
         }
       </h4>

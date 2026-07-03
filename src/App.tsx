@@ -472,20 +472,41 @@ function App() {
     }
 
     const remainingToSplit = Math.max(0, totalPrice - sumManuals);
-    const rawEqualShare = remainingToSplit / nUnmod;
-    const finalEqualShare = shouldRound ? Math.round(rawEqualShare) : parseFloat(rawEqualShare.toFixed(2));
+    const hasFila = unmod.some(u => u.name.trim().toLowerCase() === 'fíla');
 
-    return activeChecked.map((p) => {
-      const subIndex = unmod.findIndex(u => u.name === p.name);
-      if (subIndex === nUnmod - 1) {
-        // Last person absorbs rounding error to guarantee exact sum
-        const sumOthersManual = manuals.reduce((sum, x) => sum + (x.amount || 0), 0);
-        const sumOthersEqual = finalEqualShare * (nUnmod - 1);
-        const lastAmt = parseFloat((totalPrice - (sumOthersManual + sumOthersEqual)).toFixed(2));
-        return { ...p, amount: Math.max(0, lastAmt) };
-      } else {
-        return { ...p, amount: finalEqualShare };
+    // Calculate raw shares for unmodified passengers
+    let unmodShares: { name: string; amount: number }[] = [];
+    if (hasFila) {
+      const totalWeight = nUnmod - 0.1;
+      const baseShare = remainingToSplit / totalWeight;
+      unmodShares = unmod.map(u => {
+        const isFila = u.name.trim().toLowerCase() === 'fíla';
+        const raw = isFila ? baseShare * 0.9 : baseShare;
+        const rounded = shouldRound ? Math.round(raw) : parseFloat(raw.toFixed(2));
+        return { name: u.name, amount: rounded };
+      });
+    } else {
+      const baseShare = remainingToSplit / nUnmod;
+      unmodShares = unmod.map(u => {
+        const rounded = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
+        return { name: u.name, amount: rounded };
+      });
+    }
+
+    // Adjust the last unmodified passenger to absorb rounding errors and guarantee exact sum
+    if (unmodShares.length > 0) {
+      const sumExceptLast = unmodShares.slice(0, -1).reduce((sum, x) => sum + x.amount, 0);
+      const lastExpected = parseFloat((remainingToSplit - sumExceptLast).toFixed(2));
+      unmodShares[unmodShares.length - 1].amount = Math.max(0, lastExpected);
+    }
+
+    // Map back to activeChecked passengers
+    return activeChecked.map(p => {
+      if (p.isManual) {
+        return p;
       }
+      const calculated = unmodShares.find(u => u.name === p.name);
+      return { ...p, amount: calculated ? calculated.amount : 0 };
     });
   };
 
@@ -560,7 +581,15 @@ function App() {
   const remainingToSplit = Math.max(0, totalPrice - sumManuals);
   const unmodifiedCount = activeChecked.filter(p => !p.isManual).length;
   
-  const equalShareRaw = unmodifiedCount > 0 ? remainingToSplit / unmodifiedCount : 0;
+  const hasFilaInUnmod = activeChecked.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla');
+  let equalShareRaw = 0;
+  if (unmodifiedCount > 0) {
+    if (hasFilaInUnmod) {
+      equalShareRaw = remainingToSplit / (unmodifiedCount - 0.1);
+    } else {
+      equalShareRaw = remainingToSplit / unmodifiedCount;
+    }
+  }
   const equalShareDisplay = shouldRound ? Math.round(equalShareRaw) : parseFloat(equalShareRaw.toFixed(2));
 
   const showSharedQr = unmodifiedCount > 0 && equalShareDisplay > 0;
@@ -1082,8 +1111,8 @@ function App() {
                                 </div>
                               </td>
                               <td style={{ textAlign: 'center' }}>
-                                <span className={`split-badge ${p.isManual ? 'manual' : 'equal'}`}>
-                                  {p.isManual ? 'VIP taxa' : 'Běžný smrtelník'}
+                                <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
+                                  {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
                                 </span>
                               </td>
                             </tr>
@@ -1095,7 +1124,7 @@ function App() {
                         <div className="alert-info" style={{ marginTop: 15 }}>
                           <Info size={16} />
                           <span>
-                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> spravedlivě mezi {unmodifiedCount} chudáků.
+                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků`}.
                           </span>
                         </div>
                       )}
@@ -1183,15 +1212,19 @@ function App() {
                 <div className="summary-grid">
                   {/* Shared equal share QR code */}
                   {showSharedQr && (
+                    !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') || 
+                    summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla')
+                  ) && (
                     <PaymentQrCode 
                       amount={equalShareDisplay}
+                      name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
                       message={summaryMsg || 'SÁREK EXPRESS'}
                       vs={summaryVs}
                     />
                   )}
 
-                  {/* Individual overridden QR codes */}
-                  {summaryData.passengers.filter(p => p.isManual).map(p => (
+                  {/* Individual overridden QR codes and special discount for Fíla */}
+                  {summaryData.passengers.filter(p => p.isManual || p.name.trim().toLowerCase() === 'fíla').map(p => (
                     <PaymentQrCode 
                       key={p.name}
                       amount={p.amount || 0}
