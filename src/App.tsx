@@ -742,7 +742,7 @@ function App() {
               onClick={() => setCurrentScreen('active-trip')}
             >
               <Compass size={18} style={{ marginRight: 6 }} />
-              <span>Měřená Erzeta <span className="hide-mobile">(Stage)</span></span>
+              <span>Trasa</span>
             </button>
 
             <button 
@@ -1057,49 +1057,51 @@ function App() {
                         </div>
                       )}
 
-                      <table className="split-table">
-                        <thead>
-                          <tr>
-                            <th>Spolupachatel</th>
-                            <th style={{ textAlign: 'right' }}>Dluh (Kč)</th>
-                            <th style={{ textAlign: 'center' }}>Jak platí</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {calculatedShares.map(p => (
-                            <tr key={p.name}>
-                              <td className="split-name">{p.name}</td>
-                              <td style={{ textAlign: 'right' }}>
-                                <div className="split-amount-wrapper" style={{ justifyContent: 'flex-end' }}>
-                                  <input 
-                                    type="number"
-                                    className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
-                                    value={p.isManual ? (p.amount || '') : p.amount?.toFixed(2)}
-                                    placeholder={p.amount?.toFixed(2)}
-                                    onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
-                                  />
-                                  {p.isManual && (
-                                    <button 
-                                      type="button" 
-                                      className="btn-remove-stop"
-                                      onClick={() => handleResetManualAmount(p.name)}
-                                      style={{ padding: 6, marginLeft: 4 }}
-                                      title="Zpět na rovný podíl"
-                                    >
-                                      <Trash2 size={12} />
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                              <td style={{ textAlign: 'center' }}>
-                                <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
-                                  {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
-                                </span>
-                              </td>
+                      <div className="table-responsive">
+                        <table className="split-table">
+                          <thead>
+                            <tr>
+                              <th>Spolupachatel</th>
+                              <th style={{ textAlign: 'right' }}>Dluh (Kč)</th>
+                              <th style={{ textAlign: 'center' }}>Jak platí</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {calculatedShares.map(p => (
+                              <tr key={p.name}>
+                                <td className="split-name">{p.name}</td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <div className="split-amount-wrapper" style={{ justifyContent: 'flex-end' }}>
+                                    <input 
+                                      type="number"
+                                      className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
+                                      value={p.isManual ? (p.amount || '') : p.amount?.toFixed(2)}
+                                      placeholder={p.amount?.toFixed(2)}
+                                      onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
+                                    />
+                                    {p.isManual && (
+                                      <button 
+                                        type="button" 
+                                        className="btn-remove-stop"
+                                        onClick={() => handleResetManualAmount(p.name)}
+                                        style={{ padding: 6, marginLeft: 4 }}
+                                        title="Zpět na rovný podíl"
+                                      >
+                                        <Trash2 size={12} />
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                                <td style={{ textAlign: 'center' }}>
+                                  <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
+                                    {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
 
                       {hasManuals && (
                         <div className="alert-info" style={{ marginTop: 15 }}>
@@ -1245,13 +1247,7 @@ function App() {
                 </div>
               )}
 
-              {/* Warning/Info alert mentioning static environment variables configuration */}
-              <div className="alert-info" style={{ marginBottom: 24 }}>
-                <Info size={20} style={{ marginRight: 8 }} />
-                <div>
-                  <strong>TUTY RYCHLÝ DATA NEUPRAVÍŠ:</strong> Číslo účtu a tajné klíče taháme ze zašifrovaného kufru (.env), do kterého ti nic není!
-                </div>
-              </div>
+
 
               <form onSubmit={handleSaveSettings}>
                 
