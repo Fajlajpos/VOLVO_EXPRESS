@@ -126,7 +126,7 @@ function App() {
       // Sync active trip passengers with savedSettings.passengers to prevent mismatch
       const syncedPassengers = savedSettings.passengers.map(name => {
         const existing = active.passengers.find(p => p.name === name);
-        return existing || { name, checked: true, amount: 0, isManual: false };
+        return existing || { name, checked: false, amount: 0, isManual: false };
       });
       setTripPassengers(syncedPassengers);
       setDistanceKm(active.distanceKm);
@@ -138,7 +138,7 @@ function App() {
       // Initialize trip passengers if no active trip is restored
       setTripPassengers(savedSettings.passengers.map(name => ({
         name,
-        checked: true,
+        checked: false,
         amount: 0,
         isManual: false
       })));
@@ -548,7 +548,7 @@ function App() {
     setStops([]);
     setStopCoords([]);
     setDistanceKm(0);
-    setTripPassengers(settings.passengers.map(name => ({ name, checked: true, amount: 0, isManual: false })));
+    setTripPassengers(settings.passengers.map(name => ({ name, checked: false, amount: 0, isManual: false })));
     setCurrentScreen('active-trip');
   };
 
