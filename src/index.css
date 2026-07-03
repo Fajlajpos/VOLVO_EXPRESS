@@ -1,26 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cinzel:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-primary: #f9fafb;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f8fafc;
-  --border-color: #eef2f6;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
+  --bg-primary: #ebedf2;
+  --bg-secondary: rgba(255, 255, 255, 0.45);
+  --bg-tertiary: rgba(255, 255, 255, 0.3);
+  --border-color: rgba(255, 255, 255, 0.45);
+  --text-primary: #1d1d1f;
+  --text-secondary: #86868b;
   
-  /* Volvo Corporate Brand Palette */
-  --volvo-blue: #003057;
-  --volvo-blue-hover: #00457c;
-  --volvo-blue-light: #e6f0fa;
+  /* Volvo Corporate Brand Palette (optimized for Apple light mode) */
+  --volvo-blue: #0071e3;
+  --volvo-blue-hover: #0077ed;
+  --volvo-blue-light: rgba(0, 113, 227, 0.08);
   
-  --accent-cyan: #0284c7;
-  --accent-cyan-hover: #0369a1;
-  --accent-red: #ef4444;
-  --accent-red-hover: #dc2626;
-  --accent-green: #10b981;
+  --accent-cyan: #0071e3;
+  --accent-cyan-hover: #0077ed;
+  --accent-red: #ff3b30;
+  --accent-red-hover: #e3271c;
+  --accent-green: #34c759;
   
-  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: 'Cinzel', serif;
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
 /* Reset & Base Stylings */
@@ -33,10 +33,10 @@
 body {
   background-color: #ebedf2;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 40%),
-    radial-gradient(at 50% 100%, rgba(2, 132, 199, 0.08) 0px, transparent 60%),
-    radial-gradient(at 100% 100%, rgba(0, 48, 87, 0.06) 0px, transparent 50%);
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(2, 132, 199, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(236, 72, 153, 0.06) 0%, transparent 45%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-primary);
@@ -55,23 +55,23 @@ body {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--volvo-blue);
+  color: var(--text-primary);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 h1 {
   font-family: var(--font-display);
-  letter-spacing: 0.1em;
+  letter-spacing: -0.02em;
 }
 
 p, span, label, input, button, table, select, textarea {
@@ -90,14 +90,23 @@ p, span, label, input, button, table, select, textarea {
   z-index: 1;
 }
 
-/* Header */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 18px 28px;
+  margin-top: 20px;
   margin-bottom: 30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.5) 100%);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 20px;
+  box-shadow: 
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.3),
+    inset 0 10px 20px rgba(255, 255, 255, 0.25),
+    0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
 .brand {
@@ -141,14 +150,14 @@ p, span, label, input, button, table, select, textarea {
 /* Modern Tab Navigation */
 .app-nav {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-radius: 12px;
-  padding: 4px;
+  background-color: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border-radius: 14px;
+  padding: 5px;
   margin-bottom: 30px;
   gap: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 24px rgba(0, 0, 0, 0.03);
 }
 
@@ -157,7 +166,7 @@ p, span, label, input, button, table, select, textarea {
   background: none;
   border: none;
   color: var(--text-secondary);
-  padding: 10px 16px;
+  padding: 12px 18px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -165,37 +174,37 @@ p, span, label, input, button, table, select, textarea {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 9px;
+  border-radius: 10px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-tab:hover {
-  color: var(--volvo-blue);
-  background-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .nav-tab.active {
   color: var(--volvo-blue);
   background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 48, 87, 0.05);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 /* Premium Card Layout */
 .racing-card {
   background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(30px) saturate(190%);
-  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  backdrop-filter: blur(35px) saturate(210%);
+  -webkit-backdrop-filter: blur(35px) saturate(210%);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
   padding: 32px;
   margin-bottom: 30px;
   box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.65),
-    0 12px 40px 0 rgba(0, 0, 0, 0.03),
-    0 1px 3px 0 rgba(0, 0, 0, 0.02);
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    0 12px 40px rgba(0, 0, 0, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.01);
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -204,10 +213,10 @@ p, span, label, input, button, table, select, textarea {
 .racing-card:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.65);
-  border-color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.6);
   box-shadow: 
     inset 0 1px 2px rgba(255, 255, 255, 0.8),
-    0 20px 50px 0 rgba(0, 0, 0, 0.06);
+    0 20px 50px rgba(0, 0, 0, 0.06);
 }
 
 /* Status Indicator LED Pulse */
@@ -246,8 +255,8 @@ p, span, label, input, button, table, select, textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--volvo-blue);
-  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   padding-bottom: 16px;
   font-size: 20px;
   font-weight: 700;
@@ -272,7 +281,7 @@ p, span, label, input, button, table, select, textarea {
 
 .form-control {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.55);
@@ -286,9 +295,9 @@ p, span, label, input, button, table, select, textarea {
 
 .form-control:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(0, 48, 87, 0.5);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 0 0 4px rgba(0, 48, 87, 0.08);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 113, 227, 0.5);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 0 0 4px rgba(0, 113, 227, 0.1);
 }
 
 .input-with-suffix {
@@ -310,138 +319,287 @@ p, span, label, input, button, table, select, textarea {
   color: var(--text-secondary);
 }
 
-/* Clean Premium Buttons */
+/* Clean Premium Buttons - Liquid Glass Style */
 .btn-racing {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: rgba(0, 48, 87, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.35) 0%, rgba(0, 80, 200, 0.15) 100%);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 13px 26px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 9999px; /* Capsule pill shape from reference image */
   box-shadow: 
-    inset 0 1px 1px rgba(255, 255, 255, 0.25),
-    0 4px 15px rgba(0, 48, 87, 0.1);
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4), /* subtle top/left inner rim */
+    inset -1px -1px 0 rgba(0, 0, 0, 0.1),
+    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
+    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
+    inset 0 -8px 16px rgba(0, 113, 227, 0.1), /* trapped refraction bottom glow */
+    0 4px 10px rgba(0, 0, 0, 0.03),
+    0 8px 24px rgba(0, 113, 227, 0.15); /* light-casting refracted shadow */
   width: 100%;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: none;
+  text-shadow: 0 1px 2px rgba(0, 48, 87, 0.2); /* Contrast protection */
+}
+
+/* Diagonal reflection glare covering the entire capsule */
+.btn-racing::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Shine wave effect on hover */
+.btn-racing::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 25%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  transition: none;
 }
 
 .btn-racing:hover:not(:disabled) {
-  background-color: rgba(0, 48, 87, 0.85);
-  transform: scale(1.02);
+  transform: translateY(-1px) scale(1.025);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.45) 0%, rgba(0, 80, 200, 0.2) 100%);
   box-shadow: 
-    inset 0 1px 2px rgba(255, 255, 255, 0.35),
-    0 8px 20px rgba(0, 48, 87, 0.2);
+    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
+    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
+    inset 0 -6px 12px rgba(0, 113, 227, 0.15),
+    0 6px 15px rgba(0, 0, 0, 0.05),
+    0 16px 36px rgba(0, 113, 227, 0.22);
+}
+
+/* Trigger shine wave animation on hover */
+.btn-racing:hover:not(:disabled)::after {
+  left: 150%;
+  transition: left 0.8s ease-in-out;
 }
 
 .btn-racing:active:not(:disabled) {
-  transform: scale(0.97);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transform: translateY(1px) scale(0.96);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 8px 0 12px -6px rgba(255, 255, 255, 0.4),
+    inset -8px 0 12px -6px rgba(255, 255, 255, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.4) 0%, rgba(0, 80, 200, 0.18) 100%);
 }
 
 .btn-racing:disabled {
-  background: rgba(226, 232, 240, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  color: #94a3b8;
-  border-color: rgba(226, 232, 240, 0.3);
+  background: rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.05);
   box-shadow: none;
   cursor: not-allowed;
   transform: none !important;
+  text-shadow: none;
 }
 
+.btn-racing:disabled::before {
+  opacity: 0.05;
+}
+
+/* Secondary Button (Gel Glass Style) */
 .btn-racing-secondary {
-  background-color: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.03);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 12px 0 16px -6px rgba(255, 255, 255, 0.6), /* left curved glass edge glow */
+    inset -12px 0 16px -6px rgba(255, 255, 255, 0.6), /* right curved glass edge glow */
+    inset 0 -8px 16px rgba(255, 255, 255, 0.2),
+    0 4px 10px rgba(0, 0, 0, 0.03),
+    0 8px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 9999px; /* Capsule pill shape from reference image */
+}
+
+.btn-racing-secondary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
 }
 
 .btn-racing-secondary:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-color: rgba(255, 255, 255, 0.7);
-  transform: scale(1.02);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.2) 100%);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px) scale(1.025);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.6),
+    inset 14px 0 20px -5px rgba(255, 255, 255, 0.75), /* intensified left curved glow */
+    inset -14px 0 20px -5px rgba(255, 255, 255, 0.75), /* intensified right curved glow */
+    0 6px 15px rgba(0, 0, 0, 0.05),
+    0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
 .btn-racing-secondary:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: translateY(1px) scale(0.96);
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.15),
+    inset 8px 0 12px -6px rgba(255, 255, 255, 0.5),
+    inset -8px 0 12px -6px rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
 }
 
+/* Cyan Button (Gel Glass Style) */
 .btn-racing-cyan {
-  background-color: rgba(2, 132, 199, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.35) 0%, rgba(0, 80, 200, 0.15) 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
+    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
+    inset 0 -8px 16px rgba(0, 113, 227, 0.1),
+    0 4px 10px rgba(0, 0, 0, 0.03),
+    0 8px 24px rgba(0, 113, 227, 0.15);
+  color: #ffffff;
+  border-radius: 9999px; /* Capsule pill shape from reference image */
+}
+
+.btn-racing-cyan::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
 }
 
 .btn-racing-cyan:hover:not(:disabled) {
-  background-color: rgba(2, 132, 199, 0.85);
-  border-color: rgba(255, 255, 255, 0.45);
-  transform: scale(1.02);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.4) 0%, rgba(0, 80, 200, 0.18) 100%);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
+    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
+    0 6px 15px rgba(0, 0, 0, 0.05),
+    0 12px 30px rgba(0, 113, 227, 0.22);
+  transform: translateY(-1px) scale(1.025);
 }
 
-.btn-racing-cyan:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
+/* Danger Button (Gel Glass Style) */
 .btn-racing-danger {
-  background-color: rgba(239, 68, 68, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.35) 0%, rgba(200, 30, 20, 0.15) 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
+    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
+    inset 0 -8px 16px rgba(255, 59, 48, 0.1),
+    0 4px 10px rgba(0, 0, 0, 0.05),
+    0 8px 24px rgba(255, 59, 48, 0.15);
   color: #ffffff;
-  border-radius: 12px;
+  border-radius: 9999px; /* Capsule pill shape from reference image */
+  text-shadow: 0 1px 2px rgba(100, 10, 5, 0.25);
+}
+
+.btn-racing-danger::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
 }
 
 .btn-racing-danger:hover:not(:disabled) {
-  background-color: rgba(239, 68, 68, 0.85);
-  border-color: rgba(255, 255, 255, 0.45);
-  transform: scale(1.02);
-}
-
-.btn-racing-danger:active:not(:disabled) {
-  transform: scale(0.97);
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.4) 0%, rgba(200, 30, 20, 0.18) 100%);
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
+    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
+    0 6px 15px rgba(0, 0, 0, 0.05),
+    0 12px 30px rgba(255, 59, 48, 0.22);
+  transform: translateY(-1px) scale(1.025);
 }
 
 .btn-logout {
-  background-color: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  color: var(--text-secondary);
-  padding: 8px 12px;
-  border-radius: 9px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.55) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: var(--text-primary);
+  padding: 8px 18px;
+  border-radius: 9999px; /* Capsule pill shape from reference image */
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 8px 0 10px -5px rgba(255, 255, 255, 0.65), /* left curved glass edge glow */
+    inset -8px 0 10px -5px rgba(255, 255, 255, 0.65), /* right curved glass edge glow */
+    inset 0 -4px 10px rgba(255, 255, 255, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-logout::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
+  border-radius: 9999px;
+  pointer-events: none;
 }
 
 .btn-logout:hover {
-  background-color: rgba(255, 255, 255, 0.6);
-  color: var(--text-primary);
-  border-color: rgba(255, 255, 255, 0.7);
-  transform: scale(1.03);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+  color: var(--volvo-blue);
+  border-color: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+    0 6px 15px rgba(0, 0, 0, 0.06);
 }
 
 .btn-logout:active {
-  transform: scale(0.97);
+  transform: translateY(1px) scale(0.97);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Passenger List Grid */
@@ -454,30 +612,33 @@ p, span, label, input, button, table, select, textarea {
 
 /* Premium Card Checks */
 .passenger-check-card {
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
   user-select: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.01);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.02);
   transition: all 0.2s ease;
 }
 
 .passenger-check-card:hover {
-  border-color: var(--volvo-blue);
+  border-color: rgba(255, 255, 255, 0.8);
   background-color: rgba(255, 255, 255, 0.65);
 }
 
 .passenger-check-card.checked {
   border-color: var(--volvo-blue);
-  background-color: rgba(0, 48, 87, 0.08);
+  background-color: rgba(0, 113, 227, 0.08);
   font-weight: 600;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 12px rgba(0, 113, 227, 0.1);
 }
 
 .passenger-check-card input[type="checkbox"] {
@@ -494,8 +655,8 @@ p, span, label, input, button, table, select, textarea {
 
 /* Sleek Progress / Nitro Indicator (Volvo Loader style) */
 .nitro-gauge {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
@@ -525,20 +686,20 @@ p, span, label, input, button, table, select, textarea {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .split-table th {
   text-align: left;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
   padding: 12px 16px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 
@@ -546,7 +707,7 @@ p, span, label, input, button, table, select, textarea {
   padding: 12px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .split-table tr:last-child td {
@@ -565,7 +726,7 @@ p, span, label, input, button, table, select, textarea {
 
 .split-amount-input {
   width: 100px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: var(--text-primary);
   padding: 6px 10px;
@@ -577,13 +738,13 @@ p, span, label, input, button, table, select, textarea {
 
 .split-amount-input:focus {
   outline: none;
-  background-color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(0, 48, 87, 0.5);
+  background-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 113, 227, 0.5);
 }
 
 .split-amount-input.manual-active {
   border-color: var(--volvo-blue);
-  background-color: rgba(0, 48, 87, 0.08);
+  background-color: rgba(0, 113, 227, 0.08);
   color: var(--volvo-blue);
   font-weight: 600;
 }
@@ -597,12 +758,12 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .split-badge.equal {
-  background-color: var(--bg-tertiary);
+  background-color: rgba(0, 0, 0, 0.04);
   color: var(--text-secondary);
 }
 
 .split-badge.manual {
-  background-color: var(--volvo-blue-light);
+  background-color: rgba(0, 113, 227, 0.08);
   color: var(--volvo-blue);
 }
 
@@ -616,9 +777,9 @@ p, span, label, input, button, table, select, textarea {
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
   z-index: 50;
@@ -629,11 +790,12 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .autocomplete-item {
-  padding: 10px 14px;
+  padding: 12px 16px;
   cursor: pointer;
   font-size: 14px;
-  border-bottom: 1px solid var(--bg-tertiary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   transition: background-color 0.15s;
+  color: var(--text-primary);
 }
 
 .autocomplete-item:last-child {
@@ -641,7 +803,7 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .autocomplete-item:hover {
-  background-color: rgba(0, 48, 87, 0.07);
+  background-color: rgba(255, 255, 255, 0.6);
   color: var(--volvo-blue);
 }
 
@@ -658,10 +820,10 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .btn-remove-stop {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(255, 59, 48, 0.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(255, 59, 48, 0.2);
   color: var(--accent-red);
   cursor: pointer;
   padding: 10px;
@@ -673,10 +835,10 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .btn-remove-stop:hover {
-  background-color: rgba(239, 68, 68, 0.7);
+  background-color: rgba(255, 59, 48, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: rgba(255, 59, 48, 0.5);
   color: #ffffff;
   transform: scale(1.05);
 }
@@ -701,16 +863,16 @@ p, span, label, input, button, table, select, textarea {
   justify-content: center;
   padding: 24px;
   background-color: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 0 8px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 0 12px 32px rgba(0, 0, 0, 0.03);
   text-align: center;
 }
 
 .qr-canvas-wrapper {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 12px;
@@ -732,11 +894,11 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .stat-box {
-  background-color: rgba(0, 48, 87, 0.07);
+  background-color: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 16px;
   text-align: center;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
@@ -744,8 +906,8 @@ p, span, label, input, button, table, select, textarea {
 
 .stat-label {
   font-size: 12px;
-  font-weight: 700;
-  color: var(--volvo-blue);
+  font-weight: 600;
+  color: var(--text-secondary);
   text-transform: uppercase;
   margin-bottom: 4px;
   letter-spacing: 0.5px;
@@ -754,7 +916,7 @@ p, span, label, input, button, table, select, textarea {
 .stat-val {
   font-size: 32px;
   font-weight: 800;
-  color: var(--volvo-blue);
+  color: var(--text-primary);
 }
 
 /* Login Gate styling */
@@ -771,10 +933,10 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .login-error {
-  background-color: rgba(239, 68, 68, 0.12);
+  background-color: rgba(255, 59, 48, 0.1);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(255, 59, 48, 0.25);
   color: var(--accent-red);
   padding: 12px;
   border-radius: 10px;
@@ -788,10 +950,10 @@ p, span, label, input, button, table, select, textarea {
 .settings-section-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--volvo-blue);
+  color: var(--text-primary);
   text-transform: uppercase;
   margin: 28px 0 14px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   padding-bottom: 8px;
   letter-spacing: 0.5px;
 }
@@ -821,7 +983,7 @@ p, span, label, input, button, table, select, textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 12px 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   font-size: 14px;
 }
@@ -849,11 +1011,11 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .alert-success {
-  background-color: rgba(16, 185, 129, 0.12);
+  background-color: rgba(52, 199, 89, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #065f46;
+  border: 1px solid rgba(52, 199, 89, 0.25);
+  color: #1a7f37;
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -862,11 +1024,11 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .alert-info {
-  background-color: rgba(2, 132, 199, 0.1);
+  background-color: rgba(0, 113, 227, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(2, 132, 199, 0.25);
-  color: #0c4a6e;
+  border: 1px solid rgba(0, 113, 227, 0.2);
+  color: #0066cc;
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -877,11 +1039,11 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .alert-warning {
-  background-color: rgba(245, 158, 11, 0.1);
+  background-color: rgba(255, 149, 0, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  color: #78350f;
+  border: 1px solid rgba(255, 149, 0, 0.25);
+  color: #b25900;
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 20px;
@@ -961,7 +1123,7 @@ p, span, label, input, button, table, select, textarea {
   font-family: var(--font-display);
   font-size: 32px;
   letter-spacing: 0.15em;
-  color: var(--volvo-blue);
+  color: var(--text-primary);
   margin-bottom: 12px;
   font-weight: 700;
 }
@@ -977,9 +1139,11 @@ p, span, label, input, button, table, select, textarea {
 
 /* Premium Key Engine Start Button */
 .ignition-button {
-  background-color: #ffffff;
-  border: 2px solid var(--volvo-blue);
-  color: var(--volvo-blue);
+  background: linear-gradient(to bottom, rgba(0, 113, 227, 0.5) 0%, rgba(0, 80, 200, 0.3) 100%);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   width: 140px;
   height: 140px;
   border-radius: 50%;
@@ -993,33 +1157,52 @@ p, span, label, input, button, table, select, textarea {
   justify-content: center;
   gap: 8px;
   margin: 0 auto;
-  box-shadow: 0 10px 25px rgba(0, 48, 87, 0.08);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -10px 20px rgba(0, 113, 227, 0.2),
+    0 10px 25px rgba(0, 113, 227, 0.15);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-}
-
-.ignition-button:hover {
-  background-color: var(--volvo-blue);
-  color: #ffffff;
-  transform: scale(1.05);
-  box-shadow: 0 15px 30px rgba(0, 48, 87, 0.15);
-}
-
-.ignition-button:active {
-  transform: scale(0.95);
-  box-shadow: 0 5px 15px rgba(0, 48, 87, 0.1);
+  text-shadow: 0 1px 2px rgba(0, 48, 87, 0.3);
 }
 
 .ignition-button::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 70px 70px 100px 100px / 70px 70px 20px 20px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.ignition-button::after {
   content: '';
   position: absolute;
   top: -8px;
   left: -8px;
   right: -8px;
   bottom: -8px;
-  border: 1px dashed rgba(0, 48, 87, 0.3);
+  border: 1px dashed rgba(0, 113, 227, 0.35);
   border-radius: 50%;
   animation: rotate-dashed 20s linear infinite;
+  pointer-events: none;
+}
+
+.ignition-button:hover {
+  background: linear-gradient(to bottom, rgba(0, 113, 227, 0.6) 0%, rgba(0, 80, 200, 0.4) 100%);
+  transform: scale(1.05);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 15px 30px rgba(0, 113, 227, 0.3);
+}
+
+.ignition-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 5px 15px rgba(0, 113, 227, 0.15);
 }
 
 @keyframes rotate-dashed {
@@ -1046,7 +1229,7 @@ p, span, label, input, button, table, select, textarea {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 48, 87, 0.15));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.05));
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
@@ -1058,10 +1241,10 @@ p, span, label, input, button, table, select, textarea {
 
 @keyframes logo-png-glow {
   0% {
-    filter: drop-shadow(0 4px 12px rgba(0, 48, 87, 0.2)) drop-shadow(0 0 2px rgba(0, 48, 87, 0.2));
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 2px rgba(0, 113, 227, 0.15));
   }
   100% {
-    filter: drop-shadow(0 4px 12px rgba(0, 48, 87, 0.2)) drop-shadow(0 0 20px rgba(2, 132, 199, 0.6));
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 20px rgba(0, 113, 227, 0.3));
     transform: scale(1.03);
   }
 }
@@ -1111,11 +1294,11 @@ p, span, label, input, button, table, select, textarea {
 .ignition-button-overlay {
   position: absolute;
   z-index: 10;
-  background-color: rgba(0, 48, 87, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 2px solid #ffffff;
-  color: #ffffff;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.15) 100%);
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--volvo-blue);
   width: 130px;
   height: 130px;
   border-radius: 50%;
@@ -1128,30 +1311,58 @@ p, span, label, input, button, table, select, textarea {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -8px 16px rgba(255, 255, 255, 0.3),
+    0 10px 30px rgba(0, 0, 0, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ignition-button-overlay:hover {
-  background-color: rgba(2, 132, 199, 0.9);
-  transform: scale(1.06);
-  box-shadow: 0 15px 35px rgba(2, 132, 199, 0.4);
-}
-
-.ignition-button-overlay:active {
-  transform: scale(0.95);
-}
-
 .ignition-button-overlay::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 65px 65px 100px 100px / 65px 65px 20px 20px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.ignition-button-overlay::after {
   content: '';
   position: absolute;
   top: -8px;
   left: -8px;
   right: -8px;
   bottom: -8px;
-  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border: 1px dashed rgba(0, 113, 227, 0.25);
   border-radius: 50%;
   animation: rotate-dashed 20s linear infinite;
+  pointer-events: none;
+}
+
+.ignition-button-overlay:hover {
+  background: linear-gradient(to bottom, rgba(0, 113, 227, 0.8) 0%, rgba(0, 113, 227, 0.95) 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 15px 35px rgba(0, 113, 227, 0.25);
+}
+
+.ignition-button-overlay:hover::before {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+
+.ignition-button-overlay:hover::after {
+  border-color: rgba(0, 113, 227, 0.4);
+}
+
+.ignition-button-overlay:active {
+  transform: scale(0.95);
 }
 
 /* --- MOBILE & RESPONSIVENESS CUSTOM OVERRIDES --- */
@@ -1173,8 +1384,17 @@ p, span, label, input, button, table, select, textarea {
   .app-header {
     flex-direction: row;
     align-items: center;
-    padding: 16px 0;
+    padding: 14px 20px;
+    margin-top: 10px;
     margin-bottom: 20px;
+  }
+
+  .btn-logout {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
   }
 
   .brand {

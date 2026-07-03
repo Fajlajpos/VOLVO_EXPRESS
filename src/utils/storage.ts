@@ -35,7 +35,7 @@ const SESSION_KEY = 'pay_way_session';
 
 const DEFAULT_SETTINGS: Settings = {
   avgConsumption: 6.5,
-  fuelType: 'petrol',
+  fuelType: 'diesel',
   petrolPrice: 37,
   dieselPrice: 34,
   passengers: ['Fíla', 'Sam', 'Tomáš', 'Pája', 'Artur', 'Max', 'Ruby'],
