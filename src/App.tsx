@@ -201,12 +201,14 @@ function App() {
     setIsLoadingSound(true);
 
     if (videoRef.current) {
+      videoRef.current.muted = true;
       videoRef.current.play()
         .then(() => {
-          console.log("Video playback started successfully.");
+          console.log("Muted video playback started successfully.");
+          playVolvoStartupSound();
         })
         .catch(err => {
-          console.warn("Video play blocked or failed. Running fallback audio ignition...", err);
+          console.warn("Muted video play blocked or failed. Running fallback audio ignition...", err);
           triggerFallbackIgnition();
         });
     } else {
@@ -609,6 +611,7 @@ function App() {
               src={`${import.meta.env.BASE_URL}0701.mp4`}
               className="ignition-video"
               playsInline
+              muted
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
               preload="auto"

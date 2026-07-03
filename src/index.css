@@ -1359,6 +1359,9 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .ignition-video {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1368,6 +1371,8 @@ p, span, label, input, button, table, select, textarea {
   -webkit-user-select: none;
   border: none;
   outline: none;
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* absolute overlay button centered over the video */
