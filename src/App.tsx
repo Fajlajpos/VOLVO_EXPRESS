@@ -507,7 +507,8 @@ function App() {
     // Adjust the last unmodified passenger to absorb rounding errors and guarantee exact sum
     if (unmodShares.length > 0) {
       const sumExceptLast = unmodShares.slice(0, -1).reduce((sum, x) => sum + x.amount, 0);
-      const lastExpected = parseFloat((remainingToSplit - sumExceptLast).toFixed(2));
+      const lastExpectedRaw = remainingToSplit - sumExceptLast;
+      const lastExpected = shouldRound ? Math.round(lastExpectedRaw) : parseFloat(lastExpectedRaw.toFixed(2));
       unmodShares[unmodShares.length - 1].amount = Math.max(0, lastExpected);
     }
 
@@ -625,16 +626,14 @@ function App() {
               onEnded={handleVideoEnded}
               onContextMenu={(e) => e.preventDefault()}
             />
-            {!isLoadingSound && (
-              <button 
-                type="button" 
-                className="ignition-button-overlay" 
-                onClick={handleIgnition}
-              >
-                <KeyRound size={28} />
-                <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
-              </button>
-            )}
+            <button 
+              type="button" 
+              className={`ignition-button-overlay ${isLoadingSound ? 'loading' : ''}`}
+              onClick={handleIgnition}
+            >
+              <KeyRound size={28} />
+              <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
+            </button>
           </div>
 
         </div>
@@ -1085,8 +1084,8 @@ function App() {
                                     <input 
                                       type="number"
                                       className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
-                                      value={p.isManual ? (p.amount || '') : p.amount?.toFixed(2)}
-                                      placeholder={p.amount?.toFixed(2)}
+                                      value={p.isManual ? (p.amount || '') : (p.amount % 1 === 0 ? p.amount?.toFixed(0) : p.amount?.toFixed(2))}
+                                      placeholder={p.amount % 1 === 0 ? p.amount?.toFixed(0) : p.amount?.toFixed(2)}
                                       onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
                                     />
                                     {p.isManual && (

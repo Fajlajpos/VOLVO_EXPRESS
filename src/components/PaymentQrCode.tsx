@@ -70,12 +70,29 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
   }, [amount, name, bankAccount, message, vs]);
 
   const handleShare = async () => {
+    const formattedAmount = amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2);
     const shareText = name 
-      ? `Čau! Posílám výpalné za divokou jízdu se Sárek Expressem. Můj dluh dělá: ${amount.toFixed(2)} Kč. Pošli to na účet ${bankAccount} se zprávou: ${message} - ${name}`
-      : `Čau! Posílám náš společný dluh za palivo ze Sárek Expressu. Každý cáluje: ${amount.toFixed(2)} Kč na účet ${bankAccount} se zprávou: ${message}`;
+      ? `Čau! Posílám výpalné za divokou jízdu se Sárek Expressem. Můj dluh dělá: ${formattedAmount} Kč. Pošli to na účet ${bankAccount} se zprávou: ${message} - ${name}`
+      : `Čau! Posílám náš společný dluh za palivo ze Sárek Expressu. Každý cáluje: ${formattedAmount} Kč na účet ${bankAccount} se zprávou: ${message}`;
       
     if (navigator.share) {
       try {
+        if (dataUrl) {
+          const blob = await (await fetch(dataUrl)).blob();
+          const fileName = name ? `qr_${name.toLowerCase().replace(/\s+/g, '_')}.png` : 'qr_platba.png';
+          const file = new File([blob], fileName, { type: 'image/png' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'Výpalné za jízdu (SÁREK EXPRESS)',
+              text: shareText,
+              files: [file]
+            });
+            return;
+          }
+        }
+
+        // Fallback to text-only share
         await navigator.share({
           title: 'Výpalné za jízdu (SÁREK EXPRESS)',
           text: shareText,
@@ -93,6 +110,29 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         alert('Kopírování selhalo.');
       }
     }
+  };
+
+  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (navigator.share && dataUrl) {
+      // On mobile devices, using Web Share API allows saving directly to Photos / Gallery via the share sheet.
+      // This prevents the browser from just opening the raw base64 data in a new tab.
+      e.preventDefault();
+      try {
+        const blob = await (await fetch(dataUrl)).blob();
+        const fileName = name ? `qr_${name.toLowerCase().replace(/\s+/g, '_')}.png` : 'qr_platba.png';
+        const file = new File([blob], fileName, { type: 'image/png' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file]
+          });
+          return;
+        }
+      } catch (err) {
+        console.error('Error sharing for download:', err);
+      }
+    }
+    // Fallback: standard download anchor behavior (e.g. on Desktop)
   };
 
   if (error) {
@@ -116,7 +156,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }}></canvas>
       </div>
       <p style={{ fontSize: 28, fontWeight: '800', color: 'var(--volvo-blue)', marginBottom: 16 }}>
-        {amount.toFixed(2)} Kč
+        {amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2)} Kč
       </p>
       <div className="qr-actions">
         <button type="button" className="btn-racing btn-racing-secondary" onClick={handleShare}>
@@ -128,6 +168,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
             href={dataUrl} 
             download={name ? `pay_way_qr_${name.toLowerCase()}.png` : 'pay_way_qr_shared.png'}
             className="btn-racing btn-racing-cyan"
+            onClick={handleDownload}
             style={{ textDecoration: 'none' }}
           >
             <Download size={16} />

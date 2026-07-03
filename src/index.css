@@ -1403,6 +1403,12 @@ p, span, label, input, button, table, select, textarea {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.ignition-button-overlay.loading {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.9);
+}
+
 .ignition-button-overlay::before {
   content: '';
   position: absolute;
