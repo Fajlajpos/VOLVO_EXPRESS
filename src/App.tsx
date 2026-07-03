@@ -1084,8 +1084,8 @@ function App() {
                                     <input 
                                       type="number"
                                       className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
-                                      value={p.isManual ? (p.amount || '') : (p.amount % 1 === 0 ? p.amount?.toFixed(0) : p.amount?.toFixed(2))}
-                                      placeholder={p.amount % 1 === 0 ? p.amount?.toFixed(0) : p.amount?.toFixed(2)}
+                                      value={p.isManual ? (p.amount || '') : (p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2))}
+                                      placeholder={p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2)}
                                       onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
                                     />
                                     {p.isManual && (
