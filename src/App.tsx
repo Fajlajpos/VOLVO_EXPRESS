@@ -572,11 +572,13 @@ function App() {
     const remainingToSplit = Math.max(0, totalPrice - sumManuals);
     const hasFila = unmod.some(u => u.name.trim().toLowerCase() === 'fíla');
 
-    // Calculate raw shares for unmodified passengers
+    // Calculate raw shares for unmodified passengers (including the driver)
     let unmodShares: { name: string; amount: number }[] = [];
+    let driverShare = 0;
     if (hasFila) {
-      const totalWeight = nUnmod - 0.1;
+      const totalWeight = nUnmod + 1 - 0.1; // +1 for the driver
       const baseShare = remainingToSplit / totalWeight;
+      driverShare = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
       unmodShares = unmod.map(u => {
         const isFila = u.name.trim().toLowerCase() === 'fíla';
         const raw = isFila ? baseShare * 0.9 : baseShare;
@@ -584,7 +586,8 @@ function App() {
         return { name: u.name, amount: rounded };
       });
     } else {
-      const baseShare = remainingToSplit / nUnmod;
+      const baseShare = remainingToSplit / (nUnmod + 1); // +1 for the driver
+      driverShare = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
       unmodShares = unmod.map(u => {
         const rounded = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
         return { name: u.name, amount: rounded };
@@ -593,7 +596,7 @@ function App() {
 
     // Adjust the last unmodified passenger to absorb rounding errors and guarantee exact sum
     if (unmodShares.length > 0) {
-      const sumExceptLast = unmodShares.slice(0, -1).reduce((sum, x) => sum + x.amount, 0);
+      const sumExceptLast = unmodShares.slice(0, -1).reduce((sum, x) => sum + x.amount, 0) + driverShare;
       const lastExpectedRaw = remainingToSplit - sumExceptLast;
       const lastExpected = shouldRound ? Math.round(lastExpectedRaw) : parseFloat(lastExpectedRaw.toFixed(2));
       unmodShares[unmodShares.length - 1].amount = Math.max(0, lastExpected);
@@ -684,9 +687,9 @@ function App() {
   let equalShareRaw = 0;
   if (unmodifiedCount > 0) {
     if (hasFilaInUnmod) {
-      equalShareRaw = remainingToSplit / (unmodifiedCount - 0.1);
+      equalShareRaw = remainingToSplit / (unmodifiedCount + 0.9); // +1 for driver, -0.1 for Fila discount
     } else {
-      equalShareRaw = remainingToSplit / unmodifiedCount;
+      equalShareRaw = remainingToSplit / (unmodifiedCount + 1); // +1 for driver
     }
   }
   const equalShareDisplay = shouldRound ? Math.round(equalShareRaw) : parseFloat(equalShareRaw.toFixed(2));
@@ -1205,7 +1208,7 @@ function App() {
                         <div className="alert-info" style={{ marginTop: 15 }}>
                           <Info size={16} />
                           <span>
-                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků`}.
+                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků a řidiče (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků a řidiče`}.
                           </span>
                         </div>
                       )}

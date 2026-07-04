@@ -229,7 +229,7 @@ p, span, label, input, button, table, select, textarea {
 
 /* Animations when a tab becomes active */
 .nav-tab.active .nav-icon-compass {
-  animation: compass-spin-active 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: compass-spin-active 0.7s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .nav-tab.active .nav-icon-wrench {
@@ -237,9 +237,21 @@ p, span, label, input, button, table, select, textarea {
 }
 
 @keyframes compass-spin-active {
-  0% { transform: rotate(var(--device-heading, 0deg)) scale(1); }
-  50% { transform: rotate(calc(var(--device-heading, 0deg) + 180deg)) scale(1.2); }
-  100% { transform: rotate(calc(var(--device-heading, 0deg) + 360deg)) scale(1); }
+  0% { 
+    transform: rotate(var(--device-heading, 0deg)) scale(1); 
+  }
+  15% { 
+    transform: rotate(calc(var(--device-heading, 0deg) - 25deg)) scale(0.92); 
+  }
+  60% { 
+    transform: rotate(calc(var(--device-heading, 0deg) + 385deg)) scale(1.15); 
+  }
+  80% { 
+    transform: rotate(calc(var(--device-heading, 0deg) + 355deg)) scale(1.02); 
+  }
+  100% { 
+    transform: rotate(calc(var(--device-heading, 0deg) + 360deg)) scale(1); 
+  }
 }
 
 @keyframes wrench-wiggle-active {
@@ -1692,16 +1704,21 @@ p, span, label, input, button, table, select, textarea {
   width: 50%;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 10px 4px;
+  padding: 0 4px;
   opacity: 0.35;
   transform: scale(0.975);
   transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
+  height: 0;
+  overflow: hidden;
 }
 
 .slide-pane.active {
   opacity: 1;
   transform: scale(1);
+  height: auto;
+  overflow: visible;
+  padding: 10px 4px;
 }
 
 
