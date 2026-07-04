@@ -282,29 +282,30 @@ function App() {
 
   // Ignition sound & loading screen handler
   const handleIgnition = () => {
-    // 1. Always play the startup soundtrack synchronously inside click event (never blocked!)
+    // 1. Play the video FIRST and synchronously inside the click handler to satisfy strict mobile browser constraints!
+    let videoPromise: Promise<void> | undefined;
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.currentTime = 0; // ensure play starts from beginning
+      videoPromise = videoRef.current.play();
+    }
+
+    // 2. Play the startup soundtrack
     playVolvoStartupSound();
     setIsLoadingSound(true);
     requestOrientationPermission();
 
-    if (videoRef.current) {
-      // 2. Play the video MUTED (guaranteed to succeed on all mobile browsers!)
-      videoRef.current.muted = true;
-      const playPromise = videoRef.current.play();
-
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log("Muted video playback started successfully.");
-          })
-          .catch(err => {
-            console.warn("Muted video play blocked or failed. Running fallback visual transition...", err);
-            // If the video failed, we trigger the visual transition fallback timers
-            triggerVisualFallbackTimers();
-          });
-      } else {
-        console.log("Muted video playback started (legacy browser).");
-      }
+    // 3. Handle video playback promise results
+    if (videoPromise !== undefined) {
+      videoPromise
+        .then(() => {
+          console.log("Muted video playback started successfully.");
+        })
+        .catch(err => {
+          console.warn("Muted video play blocked or failed. Running fallback visual transition...", err);
+          // If the video failed, we trigger the visual transition fallback timers
+          triggerVisualFallbackTimers();
+        });
     } else {
       triggerVisualFallbackTimers();
     }
@@ -690,10 +691,11 @@ function App() {
     return (
       <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
         <div className="ignition-card-center">
-          <h1 className="ignition-title">SÁREK EXPRESS</h1>
-          <p className="ignition-subtitle">Rychle, zběsile a spravedlivě <span className="hide-mobile">(Touge Expense Division)</span></p>
-          
-          <div className="ignition-video-container" onContextMenu={(e) => e.preventDefault()}>
+          <div 
+            className="ignition-video-container" 
+            style={{ margin: '0 auto' }}
+            onContextMenu={(e) => e.preventDefault()}
+          >
             <video
               ref={videoRef}
               src={`${import.meta.env.BASE_URL}0701.mp4`}
@@ -706,14 +708,16 @@ function App() {
               onEnded={handleVideoEnded}
               onContextMenu={(e) => e.preventDefault()}
             />
-            <button 
-              type="button" 
-              className={`ignition-button-overlay ${isLoadingSound ? 'loading' : ''}`}
-              onClick={handleIgnition}
-            >
-              <KeyRound size={28} />
-              <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
-            </button>
+            {!isLoadingSound && (
+              <button 
+                type="button" 
+                className="ignition-button-overlay"
+                onClick={handleIgnition}
+              >
+                <KeyRound size={28} />
+                <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
+              </button>
+            )}
           </div>
 
         </div>
