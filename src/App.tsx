@@ -1444,6 +1444,7 @@ function App() {
                       name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
                       message={summaryMsg || 'SÁREK EXPRESS'}
                       vs={summaryVs}
+                      payingNames={summaryData.passengers.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla').map(p => p.name)}
                     />
                   )}
 
@@ -1455,6 +1456,7 @@ function App() {
                       name={p.name}
                       message={summaryMsg || 'SÁREK EXPRESS'}
                       vs={summaryVs}
+                      payingNames={[p.name]}
                     />
                   ))}
                 </div>

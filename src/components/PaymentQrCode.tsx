@@ -8,13 +8,15 @@ interface PaymentQrCodeProps {
   name?: string;
   message: string;
   vs: string;
+  payingNames?: string[];
 }
 
 export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
   amount,
   name,
   message,
-  vs
+  vs,
+  payingNames
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dataUrl, setDataUrl] = useState<string>('');
@@ -40,13 +42,10 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         recipientName: ownerName || undefined,
       });
 
-      // Clear previous canvas
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d');
-        if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
+      // Render the QR code to an offscreen canvas first
+      const qrCanvas = document.createElement('canvas');
 
-      QRCode.toCanvas(canvasRef.current, spaydStr, {
+      QRCode.toCanvas(qrCanvas, spaydStr, {
         width: 240,
         margin: 2,
         color: {
@@ -58,15 +57,94 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
           console.error(err);
           setError('Chyba generování QR kódu... Radši zaplať hotově!');
         } else {
-          if (canvasRef.current) {
-            setDataUrl(canvasRef.current.toDataURL('image/png'));
+          const mainCanvas = canvasRef.current;
+          if (mainCanvas) {
+            const ctx = mainCanvas.getContext('2d');
+            if (ctx) {
+              const namesText = payingNames && payingNames.length > 0
+                ? payingNames.join(', ')
+                : (name ? name : '');
+
+              if (namesText) {
+                // Setup font for text wrapping measurement
+                ctx.font = 'bold 13px sans-serif';
+
+                const words = namesText.split(', ');
+                const lines: string[] = [];
+                let currentLine = '';
+                const maxWidth = 220; // 240 - 20px padding
+
+                for (let i = 0; i < words.length; i++) {
+                  const testLine = currentLine + (currentLine ? ', ' : '') + words[i];
+                  const metrics = ctx.measureText(testLine);
+                  if (metrics.width > maxWidth && i > 0) {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                  } else {
+                    currentLine = testLine;
+                  }
+                }
+                if (currentLine) {
+                  lines.push(currentLine);
+                }
+
+                // Layout measurements
+                const qrSize = 240;
+                const headerHeight = 14;
+                const padding = 12;
+                const spacing = 4;
+                const lineHeight = 16;
+                const textSectionHeight = padding + headerHeight + spacing + (lines.length * lineHeight) + padding;
+
+                mainCanvas.width = 240;
+                mainCanvas.height = qrSize + textSectionHeight;
+
+                // Fill white background (must be done after changing dimensions!)
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+
+                // Draw QR Code
+                ctx.drawImage(qrCanvas, 0, 0);
+
+                // Draw thin line separator
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(10, qrSize);
+                ctx.lineTo(230, qrSize);
+                ctx.stroke();
+
+                // Draw label "KDO PLATÍ:"
+                ctx.fillStyle = '#718096';
+                ctx.font = '900 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText('KDO PLATÍ:', 120, qrSize + padding);
+
+                // Draw names
+                ctx.fillStyle = '#003057';
+                ctx.font = 'bold 13px sans-serif';
+                for (let i = 0; i < lines.length; i++) {
+                  ctx.fillText(lines[i], 120, qrSize + padding + headerHeight + spacing + (i * lineHeight));
+                }
+              } else {
+                // If there's no name, just render the standard QR size
+                mainCanvas.width = 240;
+                mainCanvas.height = 240;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+                ctx.drawImage(qrCanvas, 0, 0);
+              }
+
+              setDataUrl(mainCanvas.toDataURL('image/png'));
+            }
           }
         }
       });
     } catch (err: any) {
       setError(err.message || 'Neplatné platební údaje.');
     }
-  }, [amount, name, bankAccount, message, vs]);
+  }, [amount, name, bankAccount, message, vs, payingNames]);
 
   const handleShare = async () => {
     const formattedAmount = amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2);
