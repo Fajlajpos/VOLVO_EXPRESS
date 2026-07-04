@@ -44,12 +44,13 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
 
       // Render the QR code to an offscreen canvas first
       const qrCanvas = document.createElement('canvas');
+      const scale = 4; // High resolution scale factor for premium crispness
 
       QRCode.toCanvas(qrCanvas, spaydStr, {
-        width: 240,
+        width: 240 * scale,
         margin: 2,
         color: {
-          dark: '#003057', // Match Volvo Deep Blue
+          dark: '#000000', // Black color
           light: '#ffffff'
         }
       }, (err) => {
@@ -66,13 +67,13 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
                 : (name ? name : '');
 
               if (namesText) {
-                // Setup font for text wrapping measurement
-                ctx.font = 'bold 13px sans-serif';
+                // Setup font for text wrapping measurement (scaled)
+                ctx.font = `bold ${13 * scale}px sans-serif`;
 
                 const words = namesText.split(', ');
                 const lines: string[] = [];
                 let currentLine = '';
-                const maxWidth = 220; // 240 - 20px padding
+                const maxWidth = 220 * scale; // 240 - 20px padding (scaled)
 
                 for (let i = 0; i < words.length; i++) {
                   const testLine = currentLine + (currentLine ? ', ' : '') + words[i];
@@ -88,15 +89,15 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
                   lines.push(currentLine);
                 }
 
-                // Layout measurements
-                const qrSize = 240;
-                const headerHeight = 14;
-                const padding = 12;
-                const spacing = 4;
-                const lineHeight = 16;
+                // Layout measurements (scaled)
+                const qrSize = 240 * scale;
+                const headerHeight = 14 * scale;
+                const padding = 12 * scale;
+                const spacing = 4 * scale;
+                const lineHeight = 16 * scale;
                 const textSectionHeight = padding + headerHeight + spacing + (lines.length * lineHeight) + padding;
 
-                mainCanvas.width = 240;
+                mainCanvas.width = 240 * scale;
                 mainCanvas.height = qrSize + textSectionHeight;
 
                 // Fill white background (must be done after changing dimensions!)
@@ -106,31 +107,31 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
                 // Draw QR Code
                 ctx.drawImage(qrCanvas, 0, 0);
 
-                // Draw thin line separator
+                // Draw thin line separator (scaled)
                 ctx.strokeStyle = '#e2e8f0';
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1 * scale;
                 ctx.beginPath();
-                ctx.moveTo(10, qrSize);
-                ctx.lineTo(230, qrSize);
+                ctx.moveTo(10 * scale, qrSize);
+                ctx.lineTo(230 * scale, qrSize);
                 ctx.stroke();
 
-                // Draw label "KDO PLATÍ:"
+                // Draw label "KDO PLATÍ:" (scaled)
                 ctx.fillStyle = '#718096';
-                ctx.font = '900 11px sans-serif';
+                ctx.font = `900 ${11 * scale}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
-                ctx.fillText('KDO PLATÍ:', 120, qrSize + padding);
+                ctx.fillText('KDO PLATÍ:', 120 * scale, qrSize + padding);
 
-                // Draw names
-                ctx.fillStyle = '#003057';
-                ctx.font = 'bold 13px sans-serif';
+                // Draw names (scaled & colored black)
+                ctx.fillStyle = '#000000'; // Black color as requested
+                ctx.font = `bold ${13 * scale}px sans-serif`;
                 for (let i = 0; i < lines.length; i++) {
-                  ctx.fillText(lines[i], 120, qrSize + padding + headerHeight + spacing + (i * lineHeight));
+                  ctx.fillText(lines[i], 120 * scale, qrSize + padding + headerHeight + spacing + (i * lineHeight));
                 }
               } else {
                 // If there's no name, just render the standard QR size
-                mainCanvas.width = 240;
-                mainCanvas.height = 240;
+                mainCanvas.width = 240 * scale;
+                mainCanvas.height = 240 * scale;
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
                 ctx.drawImage(qrCanvas, 0, 0);
@@ -230,7 +231,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         }
       </h4>
       <div className="qr-canvas-wrapper">
-        <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }}></canvas>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '240px', height: 'auto', maxWidth: '100%' }}></canvas>
       </div>
       <p style={{ fontSize: 28, fontWeight: '800', color: 'var(--volvo-blue)', marginBottom: 16 }}>
         {amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2)} Kč
