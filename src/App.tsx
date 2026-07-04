@@ -574,11 +574,9 @@ function App() {
 
     // Calculate raw shares for unmodified passengers (including the driver)
     let unmodShares: { name: string; amount: number }[] = [];
-    let driverShare = 0;
     if (hasFila) {
-      const totalWeight = nUnmod + 1 - 0.1; // +1 for the driver
+      const totalWeight = nUnmod + 1 - 0.1; // +1 for the driver, -0.1 for Fila discount
       const baseShare = remainingToSplit / totalWeight;
-      driverShare = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
       unmodShares = unmod.map(u => {
         const isFila = u.name.trim().toLowerCase() === 'fíla';
         const raw = isFila ? baseShare * 0.9 : baseShare;
@@ -587,19 +585,10 @@ function App() {
       });
     } else {
       const baseShare = remainingToSplit / (nUnmod + 1); // +1 for the driver
-      driverShare = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
       unmodShares = unmod.map(u => {
         const rounded = shouldRound ? Math.round(baseShare) : parseFloat(baseShare.toFixed(2));
         return { name: u.name, amount: rounded };
       });
-    }
-
-    // Adjust the last unmodified passenger to absorb rounding errors and guarantee exact sum
-    if (unmodShares.length > 0) {
-      const sumExceptLast = unmodShares.slice(0, -1).reduce((sum, x) => sum + x.amount, 0) + driverShare;
-      const lastExpectedRaw = remainingToSplit - sumExceptLast;
-      const lastExpected = shouldRound ? Math.round(lastExpectedRaw) : parseFloat(lastExpectedRaw.toFixed(2));
-      unmodShares[unmodShares.length - 1].amount = Math.max(0, lastExpected);
     }
 
     // Map back to activeChecked passengers
@@ -1133,7 +1122,7 @@ function App() {
                     </div>
                     <div className="stat-box">
                       <div className="stat-label">DAŇ ZA PŘEŽITÍ (Na osobu)</div>
-                      <div className="stat-val">{equalShareDisplay} Kč</div>
+                      <div className="stat-val">{equalShareDisplay % 1 === 0 ? equalShareDisplay.toFixed(0) : equalShareDisplay.toFixed(2)} Kč</div>
                     </div>
                   </div>
 
@@ -1208,7 +1197,7 @@ function App() {
                         <div className="alert-info" style={{ marginTop: 15 }}>
                           <Info size={16} />
                           <span>
-                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(0)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků a řidiče (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků a řidiče`}.
+                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(shouldRound ? 0 : 2)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků a řidiče (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků a řidiče`}.
                           </span>
                         </div>
                       )}
