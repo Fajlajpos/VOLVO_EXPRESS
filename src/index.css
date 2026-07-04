@@ -159,6 +159,25 @@ p, span, label, input, button, table, select, textarea {
   gap: 4px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 8px 24px rgba(0, 0, 0, 0.03);
+  position: relative;
+  z-index: 1;
+}
+
+.nav-active-indicator {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc(50% - 7px);
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  will-change: transform, opacity;
+  z-index: 0;
 }
 
 .nav-tab {
@@ -175,21 +194,55 @@ p, span, label, input, button, table, select, textarea {
   justify-content: center;
   gap: 8px;
   border-radius: 10px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-tab svg {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-tab:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-tab:hover .nav-icon-compass {
+  transform: rotate(30deg);
+}
+
+.nav-tab:hover .nav-icon-wrench {
+  transform: rotate(-20deg) scale(1.1);
+}
+
+.nav-tab:active {
+  transform: scale(0.96);
 }
 
 .nav-tab.active {
   color: var(--volvo-blue);
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Animations when a tab becomes active */
+.nav-tab.active .nav-icon-compass {
+  animation: compass-spin-active 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-tab.active .nav-icon-wrench {
+  animation: wrench-wiggle-active 0.6s ease-in-out;
+}
+
+@keyframes compass-spin-active {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes wrench-wiggle-active {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-25deg) scale(1.15); }
+  75% { transform: rotate(15deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1); }
 }
 
 /* Premium Card Layout */

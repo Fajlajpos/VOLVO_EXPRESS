@@ -756,12 +756,19 @@ function App() {
         <>
           {/* Top Level Screen Navigation */}
           <nav className="app-nav">
+            <div 
+              className="nav-active-indicator" 
+              style={{ 
+                transform: `translateX(${currentScreen === 'settings' ? 'calc(100% + 4px)' : '0%'})`,
+                opacity: currentScreen === 'summary' ? 0 : 1
+              }}
+            />
             <button 
               type="button" 
               className={`nav-tab ${currentScreen === 'active-trip' ? 'active' : ''}`}
               onClick={() => setCurrentScreen('active-trip')}
             >
-              <Compass size={18} style={{ marginRight: 6 }} />
+              <Compass className="nav-icon-compass" size={18} style={{ marginRight: 6 }} />
               <span>Trasa</span>
             </button>
 
@@ -770,7 +777,7 @@ function App() {
               className={`nav-tab ${currentScreen === 'settings' ? 'active' : ''}`}
               onClick={() => setCurrentScreen('settings')}
             >
-              <Wrench size={18} style={{ marginRight: 6 }} />
+              <Wrench className="nav-icon-wrench" size={18} style={{ marginRight: 6 }} />
               <span>Servis & Garáž <span className="hide-mobile">(Tuning)</span></span>
             </button>
           </nav>
