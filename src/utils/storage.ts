@@ -45,7 +45,7 @@ export const getSettings = (): Settings => {
   try {
     const data = localStorage.getItem(SETTINGS_KEY);
     if (!data) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(data) }; l
   } catch {
     return DEFAULT_SETTINGS;
   }

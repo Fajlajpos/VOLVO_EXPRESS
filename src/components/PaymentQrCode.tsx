@@ -36,7 +36,6 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
       const spaydStr = generateSpaydString({
         accountNumber: bankAccount,
         amount,
-        message: name ? `${message} - ${name}` : message,
         vs,
         recipientName: ownerName || undefined,
       });
