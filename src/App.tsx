@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  Trash2, 
+import {
+  Trash2,
   ArrowRight,
   Car,
   KeyRound,
@@ -16,17 +16,17 @@ import {
   Coins
 } from 'lucide-react';
 
-import { 
-  getSettings, 
-  saveSettings, 
-  getActiveTrip, 
-  saveActiveTrip, 
-  clearActiveTrip, 
-  getSession, 
-  setSession, 
-  type Settings, 
-  type ActiveTrip, 
-  type PassengerState 
+import {
+  getSettings,
+  saveSettings,
+  getActiveTrip,
+  saveActiveTrip,
+  clearActiveTrip,
+  getSession,
+  setSession,
+  type Settings,
+  type ActiveTrip,
+  type PassengerState
 } from './utils/storage';
 
 import { searchAddress, calculateRoute, type OrsSuggestion } from './services/ors';
@@ -49,7 +49,7 @@ function App() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginError, setLoginError] = useState<boolean>(false);
-  
+
   // Navigation Screen State: 'active-trip' | 'summary' | 'settings'
   const [currentScreen, setCurrentScreen] = useState<'active-trip' | 'summary' | 'settings'>('active-trip');
 
@@ -143,7 +143,7 @@ function App() {
     touchStartX.current = null;
     touchStartY.current = null;
   };
-  
+
   // Settings State
   const [settings, setSettingsState] = useState<Settings>(getSettings());
   const [settingsSavedMsg, setSettingsSavedMsg] = useState<boolean>(false);
@@ -156,24 +156,24 @@ function App() {
   const [endCoords, setEndCoords] = useState<[number, number] | null>(null);
   const [stops, setStops] = useState<string[]>([]);
   const [stopCoords, setStopCoords] = useState<([number, number] | null)[]>([]);
-  
+
   const [roundTrip, setRoundTrip] = useState<boolean>(false);
   const [distanceKm, setDistanceKm] = useState<number>(0);
   const [isManualDistance, setIsManualDistance] = useState<boolean>(false);
-  
+
   const [tripPassengers, setTripPassengers] = useState<PassengerState[]>([]);
   const [shouldRound, setShouldRound] = useState<boolean>(true);
-  
+
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [routingError, setRoutingError] = useState<string>('');
-  
+
   // Autocomplete UI State
   const [suggestions, setSuggestions] = useState<OrsSuggestion[]>([]);
   const [activeAutocomplete, setActiveAutocomplete] = useState<{
     type: 'start' | 'end' | 'stop';
     index?: number;
   } | null>(null);
-  
+
   // Summary Data State (stores details of finished trip to render QR codes)
   const [summaryData, setSummaryData] = useState<{
     startPoint: string;
@@ -198,12 +198,12 @@ function App() {
     const rawCost = totalLitres * fuelPrice;
     return parseFloat(rawCost.toFixed(2));
   }, [roundTrip, distanceKm, settings.fuelType, settings.avgConsumption, settings.petrolPrice, settings.dieselPrice]);
-  
+
   // Load session, configurations and restore state
   useEffect(() => {
     const session = getSession();
     setIsLoggedIn(session);
-    
+
     const savedSettings = getSettings();
     setSettingsState(savedSettings);
 
@@ -222,7 +222,7 @@ function App() {
       setTripPassengers(syncedPassengers);
       setDistanceKm(active.distanceKm);
       setIsManualDistance(active.distanceKm > 0 && !active.startPoint);
-      
+
       setCurrentScreen('active-trip');
     } else {
       // Initialize trip passengers if no active trip is restored
@@ -254,7 +254,7 @@ function App() {
       saveActiveTrip(activeData);
     }
   }, [
-    startPoint, endPoint, stops, roundTrip, 
+    startPoint, endPoint, stops, roundTrip,
     tripPassengers, distanceKm, isLoggedIn, settings, calculateTotalPrice
   ]);
 
@@ -366,7 +366,7 @@ function App() {
       setSettingsState(nextSettings);
       saveSettings(nextSettings);
       setNewPassengerName('');
-      
+
       // Add to live active trip checklist as checked by default
       setTripPassengers(prev => [...prev, { name: newPassengerName.trim(), checked: true, amount: 0, isManual: false }]);
     }
@@ -377,7 +377,7 @@ function App() {
     const nextSettings = { ...settings, passengers: updated };
     setSettingsState(nextSettings);
     saveSettings(nextSettings);
-    
+
     // Also remove from active trip checklist if editing live
     setTripPassengers(prev => prev.filter(tp => tp.name !== name));
   };
@@ -446,7 +446,7 @@ function App() {
 
     // Assemble coordinates array
     const coordsList: [number, number][] = [];
-    
+
     if (startCoords) {
       coordsList.push(startCoords);
     } else {
@@ -511,7 +511,7 @@ function App() {
   const handleManualAmountChange = (name: string, val: string) => {
     const numeric = parseFloat(val);
     const amount = isNaN(numeric) ? 0 : numeric;
-    
+
     setTripPassengers(prev => {
       return prev.map(p => {
         if (p.name === name) {
@@ -562,7 +562,7 @@ function App() {
     const totalPrice = calculateTotalPrice();
     const manuals = activeChecked.filter(p => p.isManual);
     const sumManuals = manuals.reduce((sum, p) => sum + (p.amount || 0), 0);
-    
+
     const unmod = activeChecked.filter(p => !p.isManual);
     const nUnmod = unmod.length;
 
@@ -616,7 +616,7 @@ function App() {
 
     const totalPrice = calculateTotalPrice();
     const sumManuals = getManualOverrideSum();
-    
+
     if (sumManuals > totalPrice) return false;
 
     const unmod = activeChecked.filter(p => !p.isManual);
@@ -672,7 +672,7 @@ function App() {
   const hasManuals = activeChecked.some(p => p.isManual);
   const remainingToSplit = Math.max(0, totalPrice - sumManuals);
   const unmodifiedCount = activeChecked.filter(p => !p.isManual).length;
-  
+
   const hasFilaInUnmod = activeChecked.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla');
   let equalShareRaw = 0;
   if (unmodifiedCount > 0) {
@@ -691,8 +691,8 @@ function App() {
     return (
       <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
         <div className="ignition-card-center">
-          <div 
-            className="ignition-video-container" 
+          <div
+            className="ignition-video-container"
             style={{ margin: '0 auto' }}
             onContextMenu={(e) => e.preventDefault()}
           >
@@ -709,8 +709,8 @@ function App() {
               onContextMenu={(e) => e.preventDefault()}
             />
             {!isLoadingSound && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="ignition-button-overlay"
                 onClick={handleIgnition}
               >
@@ -726,12 +726,12 @@ function App() {
   }
 
   return (
-    <div 
+    <div
       className="app-container fade-in"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      
+
 
       {/* Main Header */}
       <header className="app-header">
@@ -744,9 +744,9 @@ function App() {
         <div className="header-actions">
           {/* Logout Button */}
           {isLoggedIn && (
-            <button 
-              type="button" 
-              className="btn-logout" 
+            <button
+              type="button"
+              className="btn-logout"
               onClick={handleLogout}
             >
               <X size={16} />
@@ -764,7 +764,7 @@ function App() {
               <KeyRound size={22} style={{ marginRight: 8 }} />
               KLÍČKY DO ZAPALOVÁNÍ / AUTORIZACE PILOTA
             </h2>
-            
+
             {loginError && (
               <div className="login-error">
                 <AlertTriangle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
@@ -775,25 +775,25 @@ function App() {
             <form onSubmit={handleLogin}>
               <div className="form-group">
                 <label className="form-label">E-mail kapitána korábu</label>
-                <input 
-                  type="email" 
-                  className="form-control" 
-                  placeholder="driver@payway.cz" 
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="driver@payway.cz"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label className="form-label">Kód k tajnému raketovému pohonu (heslo)</label>
-                <input 
-                  type="password" 
-                  className="form-control" 
-                  placeholder="••••••••" 
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
@@ -809,34 +809,34 @@ function App() {
         <>
           {/* Top Level Screen Navigation */}
           <nav className="app-nav">
-            <div 
-              className="nav-active-indicator" 
-              style={{ 
+            <div
+              className="nav-active-indicator"
+              style={{
                 transform: `translateX(${currentScreen === 'settings' ? 'calc(100% + 4px)' : '0%'})`,
                 opacity: currentScreen === 'summary' ? 0 : 1
               }}
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={`nav-tab ${currentScreen === 'active-trip' ? 'active' : ''}`}
               onClick={() => {
                 setCurrentScreen('active-trip');
                 requestOrientationPermission();
               }}
             >
-              <Compass 
-                className="nav-icon-compass" 
-                size={18} 
-                style={{ 
+              <Compass
+                className="nav-icon-compass"
+                size={18}
+                style={{
                   marginRight: 6,
                   ['--device-heading' as any]: `${deviceHeading}deg`
-                }} 
+                }}
               />
               <span>Trasa</span>
             </button>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={`nav-tab ${currentScreen === 'settings' ? 'active' : ''}`}
               onClick={() => {
                 setCurrentScreen('settings');
@@ -853,72 +853,38 @@ function App() {
             <div className="screens-slider-track" style={{ transform: `translateX(${currentScreen === 'settings' ? '-50%' : '0%'})` }}>
               <div className={`slide-pane ${currentScreen === 'active-trip' ? 'active' : ''}`}>
                 <div className="trip-overview-grid">
-              {/* Active Trip Left Panel: Config Form */}
-              <div className="racing-card">
-                <h3 className="card-title">
-                  <Flag size={22} style={{ marginRight: 8 }} />
-                  TRASA PRO DNEŠNÍ ZÁVOD
-                </h3>
-                
-                {routingError && (
-                  <div className="alert-warning">
-                    <AlertTriangle size={18} />
-                    <span>{routingError}</span>
-                  </div>
-                )}
+                  {/* Active Trip Left Panel: Config Form */}
+                  <div className="racing-card">
+                    <h3 className="card-title">
+                      <Flag size={22} style={{ marginRight: 8 }} />
+                      TRASA PRO DNEŠNÍ ZÁVOD
+                    </h3>
 
-                <div className="form-group">
-                  <label className="form-label">STARTOVNÍ ČÁRA (Odkud)</label>
-                  <div className="autocomplete-wrapper">
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Kde startujeme motory?" 
-                      value={startPoint}
-                      onChange={(e) => {
-                        setStartPoint(e.target.value);
-                        triggerAutocomplete(e.target.value, 'start');
-                      }}
-                    />
-                    {activeAutocomplete?.type === 'start' && suggestions.length > 0 && (
-                      <div className="autocomplete-dropdown">
-                        {suggestions.map((s, idx) => (
-                          <div 
-                            key={idx} 
-                            className="autocomplete-item"
-                            onClick={() => selectSuggestion(s)}
-                          >
-                            {s.label}
-                          </div>
-                        ))}
+                    {routingError && (
+                      <div className="alert-warning">
+                        <AlertTriangle size={18} />
+                        <span>{routingError}</span>
                       </div>
                     )}
-                  </div>
-                </div>
 
-                {/* Waypoints Stops List */}
-                {stops.map((stop, idx) => (
-                  <div className="form-group fade-in" key={idx}>
-                    <label className="form-label">MEZIČAS #{idx + 1} (Průjezdní bod)</label>
-                    <div className="stopover-item">
-                      <div className="autocomplete-wrapper" style={{ flex: 1 }}>
-                        <input 
-                          type="text" 
-                          className="form-control" 
-                          placeholder="Kudy to střihneme?" 
-                          value={stop}
+                    <div className="form-group">
+                      <label className="form-label">STARTOVNÍ ČÁRA (Odkud)</label>
+                      <div className="autocomplete-wrapper">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Kde startujeme motory?"
+                          value={startPoint}
                           onChange={(e) => {
-                            const next = [...stops];
-                            next[idx] = e.target.value;
-                            setStops(next);
-                            triggerAutocomplete(e.target.value, 'stop', idx);
+                            setStartPoint(e.target.value);
+                            triggerAutocomplete(e.target.value, 'start');
                           }}
                         />
-                        {activeAutocomplete?.type === 'stop' && activeAutocomplete.index === idx && suggestions.length > 0 && (
+                        {activeAutocomplete?.type === 'start' && suggestions.length > 0 && (
                           <div className="autocomplete-dropdown">
-                            {suggestions.map((s, sIdx) => (
-                              <div 
-                                key={sIdx} 
+                            {suggestions.map((s, idx) => (
+                              <div
+                                key={idx}
                                 className="autocomplete-item"
                                 onClick={() => selectSuggestion(s)}
                               >
@@ -928,448 +894,482 @@ function App() {
                           </div>
                         )}
                       </div>
-                      <button 
-                        type="button" 
-                        className="btn-remove-stop" 
-                        onClick={() => handleRemoveStop(idx)}
-                      >
-                        <Trash2 size={16} />
-                      </button>
                     </div>
-                  </div>
-                ))}
 
-                <div style={{ marginBottom: 20 }}>
-                  <button 
-                    type="button" 
-                    className="btn-racing btn-racing-secondary" 
-                    onClick={handleAddStop}
-                    style={{ padding: '8px 16px', width: 'auto' }}
-                  >
-                    <Flag size={16} />
-                    <span style={{ fontSize: '14px' }}>PŘIDAT ZASTÁVKU NA PIVO/KAFE</span>
-                  </button>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">ŠACHOVNICOVÁ VLAJKA (Kam)</label>
-                  <div className="autocomplete-wrapper">
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Kde budeme slavit přežití?" 
-                      value={endPoint}
-                      onChange={(e) => {
-                        setEndPoint(e.target.value);
-                        triggerAutocomplete(e.target.value, 'end');
-                      }}
-                    />
-                    {activeAutocomplete?.type === 'end' && suggestions.length > 0 && (
-                      <div className="autocomplete-dropdown">
-                        {suggestions.map((s, idx) => (
-                          <div 
-                            key={idx} 
-                            className="autocomplete-item"
-                            onClick={() => selectSuggestion(s)}
-                          >
-                            {s.label}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Round Trip Toggle & Routing Trigger */}
-                <div className="form-grid" style={{ marginBottom: 20 }}>
-                  <div>
-                    <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
-                    <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
-                      <button 
-                        type="button" 
-                        className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
-                        onClick={() => setRoundTrip(false)}
-                        style={{ padding: '10px 14px' }}
-                      >
-                        Jen tam (Single run)
-                      </button>
-                      <button 
-                        type="button" 
-                        className={`btn-racing ${roundTrip ? '' : 'btn-racing-secondary'}`}
-                        onClick={() => setRoundTrip(true)}
-                        style={{ padding: '10px 14px' }}
-                      >
-                        Tam a zpět (Double loop)
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="form-label">&nbsp;</label>
-                    <button 
-                      type="button" 
-                      className="btn-racing btn-racing-cyan" 
-                      onClick={handleCalculateRoute}
-                      disabled={isCalculating}
-                    >
-                      <Compass size={18} />
-                      <span>{isCalculating ? 'Žhavíme navigátora...' : 'SPOČÍTAT TRASU (GPS satelit)'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Loading state bar during calculation */}
-                {isCalculating && (
-                  <div style={{ marginTop: 15 }}>
-                    <div className="nitro-gauge">
-                      <div className="nitro-fill" style={{ width: '85%' }}></div>
-                    </div>
-                    <div className="nitro-label">
-                      <span>GPS VSTŘIKOVÁNÍ</span>
-                      <span>Hledáme zkratky přes pole a lesy...</span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="form-grid m-t-20">
-                  <div className="form-group">
-                    <label className="form-label">UJETÁ VZDÁLENOST (Kolik km podvozek zaplakal)</label>
-                    <div className="input-with-suffix">
-                      <input 
-                        type="number" 
-                        className="form-control" 
-                        value={distanceKm || ''}
-                        onChange={(e) => {
-                          setDistanceKm(Math.max(0, parseFloat(e.target.value) || 0));
-                          setIsManualDistance(true);
-                        }}
-                      />
-                      <span className="input-suffix">km</span>
-                    </div>
-                  </div>
-                  
-                  {isManualDistance && (
-                    <div className="alert-info" style={{ marginTop: 10 }}>
-                      <Info size={16} />
-                      <span>Vzdálenost zadána ručně. Snad si nevymýšlíš!</span>
-                    </div>
-                  )}
-                </div>
-
-
-
-                <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
-                  <button 
-                    type="button" 
-                    className="btn-racing btn-racing-danger" 
-                    onClick={handleResetActiveTrip}
-                  >
-                    <X size={18} />
-                    <span>SEŠROTOVAT JÍZDU (Smazat data)</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Active Trip Right Panel: Cost Splits & Passenger Checks */}
-              <div>
-                <div className="racing-card">
-                  <h3 className="card-title">
-                    <Flag size={22} style={{ marginRight: 8 }} />
-                    Kdo přežil tuhle divočinu? (Posádka)
-                  </h3>
-                  
-                  {settings.passengers.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-                      V autě nikdo nesedí? Takhle za palivo neušetříš! Zajeď do Garáže a naber lidi.
-                    </p>
-                  ) : (
-                    <div className="passenger-grid">
-                      {settings.passengers.map(name => {
-                        const tripP = tripPassengers.find(tp => tp.name === name);
-                        const isChecked = tripP ? tripP.checked : false;
-                        return (
-                          <div 
-                            key={name}
-                            className={`passenger-check-card ${isChecked ? 'checked' : ''}`}
-                            onClick={() => handleTogglePassenger(name)}
-                          >
-                            <input 
-                              type="checkbox" 
-                              checked={isChecked}
-                              readOnly
+                    {/* Waypoints Stops List */}
+                    {stops.map((stop, idx) => (
+                      <div className="form-group fade-in" key={idx}>
+                        <label className="form-label">MEZIČAS #{idx + 1} (Průjezdní bod)</label>
+                        <div className="stopover-item">
+                          <div className="autocomplete-wrapper" style={{ flex: 1 }}>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Kudy to střihneme?"
+                              value={stop}
+                              onChange={(e) => {
+                                const next = [...stops];
+                                next[idx] = e.target.value;
+                                setStops(next);
+                                triggerAutocomplete(e.target.value, 'stop', idx);
+                              }}
                             />
-                            <span>{name}</span>
+                            {activeAutocomplete?.type === 'stop' && activeAutocomplete.index === idx && suggestions.length > 0 && (
+                              <div className="autocomplete-dropdown">
+                                {suggestions.map((s, sIdx) => (
+                                  <div
+                                    key={sIdx}
+                                    className="autocomplete-item"
+                                    onClick={() => selectSuggestion(s)}
+                                  >
+                                    {s.label}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                          <button
+                            type="button"
+                            className="btn-remove-stop"
+                            onClick={() => handleRemoveStop(idx)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
 
-                  {activeChecked.length === 0 && (
-                    <div className="alert-warning" style={{ margin: '15px 0 0 0' }}>
-                      <AlertTriangle size={18} />
-                      <span>Nemůžeš jet sám, kdo by navigoval nebo ti podával chipsy?</span>
+                    <div style={{ marginBottom: 20 }}>
+                      <button
+                        type="button"
+                        className="btn-racing btn-racing-secondary"
+                        onClick={handleAddStop}
+                        style={{ padding: '8px 16px', width: 'auto' }}
+                      >
+                        <Flag size={16} />
+                        <span style={{ fontSize: '14px' }}>PŘIDAT ZASTÁVKU NA PIVO/KAFE</span>
+                      </button>
                     </div>
-                  )}
-                </div>
 
-                <div className="racing-card">
-                  <h3 className="card-title">
-                    <Trophy size={22} style={{ marginRight: 8 }} />
-                    DAŇOVÝ VÝMĚR (Vyúčtování)
-                  </h3>
-
-                  <div className="summary-stats">
-                    <div className="stat-box">
-                      <div className="stat-label">ÚČET ZA BENZÍNKU (Celkem)</div>
-                      <div className="stat-val">{totalPrice} Kč</div>
+                    <div className="form-group">
+                      <label className="form-label">ŠACHOVNICOVÁ VLAJKA (Kam)</label>
+                      <div className="autocomplete-wrapper">
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Kde budeme slavit přežití?"
+                          value={endPoint}
+                          onChange={(e) => {
+                            setEndPoint(e.target.value);
+                            triggerAutocomplete(e.target.value, 'end');
+                          }}
+                        />
+                        {activeAutocomplete?.type === 'end' && suggestions.length > 0 && (
+                          <div className="autocomplete-dropdown">
+                            {suggestions.map((s, idx) => (
+                              <div
+                                key={idx}
+                                className="autocomplete-item"
+                                onClick={() => selectSuggestion(s)}
+                              >
+                                {s.label}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="stat-box">
-                      <div className="stat-label">DAŇ ZA PŘEŽITÍ (Na osobu)</div>
-                      <div className="stat-val">{equalShareDisplay % 1 === 0 ? equalShareDisplay.toFixed(0) : equalShareDisplay.toFixed(2)} Kč</div>
-                    </div>
-                  </div>
 
-                  {/* Manual Cost Splits Table */}
-                  {activeChecked.length > 0 && (
-                    <div style={{ marginTop: 20 }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+                    {/* Round Trip Toggle & Routing Trigger */}
+                    <div className="form-grid" style={{ marginBottom: 20 }}>
+                      <div>
+                        <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
+                        <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
+                          <button
+                            type="button"
+                            className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
+                            onClick={() => setRoundTrip(false)}
+                            style={{ padding: '10px 14px' }}
+                          >
+                            Jen tam (Single run)
+                          </button>
+                          <button
+                            type="button"
+                            className={`btn-racing ${roundTrip ? '' : 'btn-racing-secondary'}`}
+                            onClick={() => setRoundTrip(true)}
+                            style={{ padding: '10px 14px' }}
+                          >
+                            Tam a zpět (Double loop)
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="form-label">&nbsp;</label>
                         <button
                           type="button"
-                          className={`btn-round ${shouldRound ? 'active' : ''}`}
-                          onClick={() => setShouldRound(!shouldRound)}
+                          className="btn-racing btn-racing-cyan"
+                          onClick={handleCalculateRoute}
+                          disabled={isCalculating}
                         >
-                          <Coins size={16} />
-                          <span>{shouldRound ? 'Zaokrouhleno (celé Kč)' : 'Zaokrouhlit na celé Kč'}</span>
+                          <Compass size={18} />
+                          <span>{isCalculating ? 'Žhavíme navigátora...' : 'SPOČÍTAT TRASU (GPS satelit)'}</span>
                         </button>
                       </div>
+                    </div>
 
-                      {sumManuals > totalPrice && (
-                        <div className="alert-warning" style={{ margin: '12px 0' }}>
-                          <AlertTriangle size={16} />
-                          <span>Bacha! Rozdělil jsi víc peněz, než kolik ta jízda vůbec stála. Takhle nezbohatneme!</span>
+                    {/* Loading state bar during calculation */}
+                    {isCalculating && (
+                      <div style={{ marginTop: 15 }}>
+                        <div className="nitro-gauge">
+                          <div className="nitro-fill" style={{ width: '85%' }}></div>
                         </div>
-                      )}
+                        <div className="nitro-label">
+                          <span>GPS VSTŘIKOVÁNÍ</span>
+                          <span>Hledáme zkratky přes pole a lesy...</span>
+                        </div>
+                      </div>
+                    )}
 
-                      <div className="table-responsive">
-                        <table className="split-table">
-                          <thead>
-                            <tr>
-                              <th>Spolupachatel</th>
-                              <th style={{ textAlign: 'right' }}>Dluh (Kč)</th>
-                              <th style={{ textAlign: 'center' }}>Jak platí</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {calculatedShares.map(p => (
-                              <tr key={p.name}>
-                                <td className="split-name">{p.name}</td>
-                                <td style={{ textAlign: 'right' }}>
-                                  <div className="split-amount-wrapper" style={{ justifyContent: 'flex-end' }}>
-                                    <input 
-                                      type="number"
-                                      className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
-                                      value={p.isManual ? (p.amount || '') : (p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2))}
-                                      placeholder={p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2)}
-                                      onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
-                                    />
-                                    {p.isManual && (
-                                      <button 
-                                        type="button" 
-                                        className="btn-remove-stop"
-                                        onClick={() => handleResetManualAmount(p.name)}
-                                        style={{ padding: 6, marginLeft: 4 }}
-                                        title="Zpět na rovný podíl"
-                                      >
-                                        <Trash2 size={12} />
-                                      </button>
-                                    )}
-                                  </div>
-                                </td>
-                                <td style={{ textAlign: 'center' }}>
-                                  <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
-                                    {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                    <div className="form-grid m-t-20">
+                      <div className="form-group">
+                        <label className="form-label">UJETÁ VZDÁLENOST (Kolik km podvozek zaplakal)</label>
+                        <div className="input-with-suffix">
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={distanceKm || ''}
+                            onChange={(e) => {
+                              setDistanceKm(Math.max(0, parseFloat(e.target.value) || 0));
+                              setIsManualDistance(true);
+                            }}
+                          />
+                          <span className="input-suffix">km</span>
+                        </div>
                       </div>
 
-                      {hasManuals && (
-                        <div className="alert-info" style={{ marginTop: 15 }}>
+                      {isManualDistance && (
+                        <div className="alert-info" style={{ marginTop: 10 }}>
                           <Info size={16} />
-                          <span>
-                            Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(shouldRound ? 0 : 2)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků a řidiče (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků a řidiče`}.
-                          </span>
+                          <span>Vzdálenost zadána ručně. Snad si nevymýšlíš!</span>
                         </div>
                       )}
                     </div>
-                  )}
 
-                  <div style={{ marginTop: 24 }}>
-                    <button 
-                      type="button" 
-                      className="btn-racing btn-racing-cyan"
-                      onClick={handleFinishTrip}
-                      disabled={!isTripValid()}
-                    >
-                      <Flag size={18} />
-                      <span>VYSTAVIT ÚČTENKY A UKÁZAT QR KÓDY</span>
-                    </button>
+
+
+                    <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
+                      <button
+                        type="button"
+                        className="btn-racing btn-racing-danger"
+                        onClick={handleResetActiveTrip}
+                      >
+                        <X size={18} />
+                        <span>SEŠROTOVAT JÍZDU (Smazat data)</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
+
+                  {/* Active Trip Right Panel: Cost Splits & Passenger Checks */}
+                  <div>
+                    <div className="racing-card">
+                      <h3 className="card-title">
+                        <Flag size={22} style={{ marginRight: 8 }} />
+                        Kdo přežil tuhle divočinu? (Posádka)
+                      </h3>
+
+                      {settings.passengers.length === 0 ? (
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+                          V autě nikdo nesedí? Takhle za palivo neušetříš! Zajeď do Garáže a naber lidi.
+                        </p>
+                      ) : (
+                        <div className="passenger-grid">
+                          {settings.passengers.map(name => {
+                            const tripP = tripPassengers.find(tp => tp.name === name);
+                            const isChecked = tripP ? tripP.checked : false;
+                            return (
+                              <div
+                                key={name}
+                                className={`passenger-check-card ${isChecked ? 'checked' : ''}`}
+                                onClick={() => handleTogglePassenger(name)}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  readOnly
+                                />
+                                <span>{name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {activeChecked.length === 0 && (
+                        <div className="alert-warning" style={{ margin: '15px 0 0 0' }}>
+                          <AlertTriangle size={18} />
+                          <span>Nemůžeš jet sám, kdo by navigoval nebo ti podával vapo?</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="racing-card">
+                      <h3 className="card-title">
+                        <Trophy size={22} style={{ marginRight: 8 }} />
+                        DAŇOVÝ VÝMĚR (Vyúčtování)
+                      </h3>
+
+                      <div className="summary-stats">
+                        <div className="stat-box">
+                          <div className="stat-label">ÚČET ZA BENZÍNKU (Celkem)</div>
+                          <div className="stat-val">{totalPrice} Kč</div>
+                        </div>
+                        <div className="stat-box">
+                          <div className="stat-label">DAŇ ZA PŘEŽITÍ (Na osobu)</div>
+                          <div className="stat-val">{equalShareDisplay % 1 === 0 ? equalShareDisplay.toFixed(0) : equalShareDisplay.toFixed(2)} Kč</div>
+                        </div>
+                      </div>
+
+                      {/* Manual Cost Splits Table */}
+                      {activeChecked.length > 0 && (
+                        <div style={{ marginTop: 20 }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+                            <button
+                              type="button"
+                              className={`btn-round ${shouldRound ? 'active' : ''}`}
+                              onClick={() => setShouldRound(!shouldRound)}
+                            >
+                              <Coins size={16} />
+                              <span>{shouldRound ? 'Zaokrouhleno (celé Kč)' : 'Zaokrouhlit na celé Kč'}</span>
+                            </button>
+                          </div>
+
+                          {sumManuals > totalPrice && (
+                            <div className="alert-warning" style={{ margin: '12px 0' }}>
+                              <AlertTriangle size={16} />
+                              <span>Bacha! Rozdělil jsi víc peněz, než kolik ta jízda vůbec stála. Takhle nezbohatneme!</span>
+                            </div>
+                          )}
+
+                          <div className="table-responsive">
+                            <table className="split-table">
+                              <thead>
+                                <tr>
+                                  <th>Spolupachatel</th>
+                                  <th style={{ textAlign: 'right' }}>Dluh (Kč)</th>
+                                  <th style={{ textAlign: 'center' }}>Jak platí</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {calculatedShares.map(p => (
+                                  <tr key={p.name}>
+                                    <td className="split-name">{p.name}</td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      <div className="split-amount-wrapper" style={{ justifyContent: 'flex-end' }}>
+                                        <input
+                                          type="number"
+                                          className={`split-amount-input ${p.isManual ? 'manual-active' : ''}`}
+                                          value={p.isManual ? (p.amount || '') : (p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2))}
+                                          placeholder={p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2)}
+                                          onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
+                                        />
+                                        {p.isManual && (
+                                          <button
+                                            type="button"
+                                            className="btn-remove-stop"
+                                            onClick={() => handleResetManualAmount(p.name)}
+                                            style={{ padding: 6, marginLeft: 4 }}
+                                            title="Zpět na rovný podíl"
+                                          >
+                                            <Trash2 size={12} />
+                                          </button>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>
+                                      <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
+                                        {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {hasManuals && (
+                            <div className="alert-info" style={{ marginTop: 15 }}>
+                              <Info size={16} />
+                              <span>
+                                Zbývá rozdělit: <strong>{(totalPrice - sumManuals).toFixed(shouldRound ? 0 : 2)} Kč</strong> {hasFilaInUnmod ? `mezi ${unmodifiedCount} chudáků a řidiče (Fíla má 10% slevu)` : `spravedlivě mezi ${unmodifiedCount} chudáků a řidiče`}.
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div style={{ marginTop: 24 }}>
+                        <button
+                          type="button"
+                          className="btn-racing btn-racing-cyan"
+                          onClick={handleFinishTrip}
+                          disabled={!isTripValid()}
+                        >
+                          <Flag size={18} />
+                          <span>VYSTAVIT ÚČTENKY A UKÁZAT QR KÓDY</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
 
               <div className={`slide-pane ${currentScreen === 'settings' ? 'active' : ''}`}>
                 <div className="racing-card">
-              <h2 className="card-title">
-                <Wrench size={24} style={{ marginRight: 8 }} />
-                TUNING GARÁŽ (Konfigurace stroje)
-              </h2>
+                  <h2 className="card-title">
+                    <Wrench size={24} style={{ marginRight: 8 }} />
+                    TUNING GARÁŽ (Konfigurace stroje)
+                  </h2>
 
-              {settingsSavedMsg && (
-                <div className="alert-success">
-                  <CheckCircle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
-                  <span>Motor naladěn, ventily seřízeny, uloženo do paměti!</span>
-                </div>
-              )}
-
-
-
-              <form onSubmit={handleSaveSettings}>
-                
-                <h3 className="settings-section-title">
-                  <Car size={18} style={{ marginRight: 8 }} />
-                  PRESETY MOTORU A CHUŤ K JÍDLU
-                </h3>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Jak moc ta bestie chlastá (Průměrná spotřeba)</label>
-                    <div className="input-with-suffix">
-                      <input 
-                        type="number" 
-                        step="0.1"
-                        className="form-control" 
-                        value={settings.avgConsumption || ''}
-                        onChange={(e) => setSettingsState({ ...settings, avgConsumption: Math.max(0, parseFloat(e.target.value) || 0) })}
-                        required
-                      />
-                      <span className="input-suffix">l/100km</span>
+                  {settingsSavedMsg && (
+                    <div className="alert-success">
+                      <CheckCircle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
+                      <span>Motor naladěn, ventily seřízeny, uloženo do paměti!</span>
                     </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Co teče do nádrže</label>
-                    <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
-                      <button 
-                        type="button" 
-                        className={`btn-racing ${settings.fuelType === 'petrol' ? '' : 'btn-racing-secondary'}`}
-                        onClick={() => setSettingsState({ ...settings, fuelType: 'petrol' })}
-                        style={{ padding: '10px 14px' }}
-                      >
-                        Benzín
-                      </button>
-                      <button 
-                        type="button" 
-                        className={`btn-racing ${settings.fuelType === 'diesel' ? '' : 'btn-racing-secondary'}`}
-                        onClick={() => setSettingsState({ ...settings, fuelType: 'diesel' })}
-                        style={{ padding: '10px 14px' }}
-                      >
-                        Nafta
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <h3 className="settings-section-title">KREJCARŮ ZA LITR PALIVA (Benzínka)</h3>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Benzínový nektar (Kč/l)</label>
-                    <div className="input-with-suffix">
-                      <input 
-                        type="number" 
-                        step="0.1"
-                        className="form-control" 
-                        value={settings.petrolPrice || ''}
-                        onChange={(e) => setSettingsState({ ...settings, petrolPrice: Math.max(0, parseFloat(e.target.value) || 0) })}
-                        required
-                      />
-                      <span className="input-suffix">Kč/l</span>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Naftová ropa (Kč/l)</label>
-                    <div className="input-with-suffix">
-                      <input 
-                        type="number" 
-                        step="0.1"
-                        className="form-control" 
-                        value={settings.dieselPrice || ''}
-                        onChange={(e) => setSettingsState({ ...settings, dieselPrice: Math.max(0, parseFloat(e.target.value) || 0) })}
-                        required
-                      />
-                      <span className="input-suffix">Kč/l</span>
-                    </div>
-                  </div>
-                </div>
-
-                <h3 className="settings-section-title">
-                  <Flag size={18} style={{ marginRight: 8 }} />
-                  KARTOTÉKA SPOLUJEZDCŮ (Paměť)
-                </h3>
-                <div className="passenger-input-group">
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="Jméno další oběti"
-                    value={newPassengerName}
-                    onChange={(e) => setNewPassengerName(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPassenger())}
-                  />
-                  <button 
-                    type="button" 
-                    className="btn-racing btn-racing-cyan"
-                    onClick={handleAddPassenger}
-                    style={{ width: 'auto', padding: '10px 20px' }}
-                  >
-                    PŘIBRAT DO AUTO
-                  </button>
-                </div>
-
-                <div className="passenger-list-box">
-                  {settings.passengers.length === 0 ? (
-                    <p style={{ color: 'var(--text-secondary)', padding: 16, fontSize: 13, textAlign: 'center' }}>
-                      Garáž zeje prázdnotou, nikoho tu nemáš.
-                    </p>
-                  ) : (
-                    settings.passengers.map(name => (
-                      <div key={name} className="passenger-item">
-                        <span>{name}</span>
-                        <button 
-                          type="button" 
-                          className="btn-delete-passenger"
-                          onClick={() => handleDeletePassenger(name)}
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    ))
                   )}
-                </div>
 
-                <div style={{ marginTop: 30 }}>
-                  <button type="submit" className="btn-racing">
-                    <Save size={20} />
-                    <span>ZAMKNOUT TUNING (Uložit)</span>
-                  </button>
-                </div>
 
-              </form>
+
+                  <form onSubmit={handleSaveSettings}>
+
+                    <h3 className="settings-section-title">
+                      <Car size={18} style={{ marginRight: 8 }} />
+                      PRESETY MOTORU A CHUŤ K JÍDLU
+                    </h3>
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label className="form-label">Jak moc ta bestie chlastá (Průměrná spotřeba)</label>
+                        <div className="input-with-suffix">
+                          <input
+                            type="number"
+                            step="0.1"
+                            className="form-control"
+                            value={settings.avgConsumption || ''}
+                            onChange={(e) => setSettingsState({ ...settings, avgConsumption: Math.max(0, parseFloat(e.target.value) || 0) })}
+                            required
+                          />
+                          <span className="input-suffix">l/100km</span>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">Co teče do nádrže</label>
+                        <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
+                          <button
+                            type="button"
+                            className={`btn-racing ${settings.fuelType === 'petrol' ? '' : 'btn-racing-secondary'}`}
+                            onClick={() => setSettingsState({ ...settings, fuelType: 'petrol' })}
+                            style={{ padding: '10px 14px' }}
+                          >
+                            Benzín
+                          </button>
+                          <button
+                            type="button"
+                            className={`btn-racing ${settings.fuelType === 'diesel' ? '' : 'btn-racing-secondary'}`}
+                            onClick={() => setSettingsState({ ...settings, fuelType: 'diesel' })}
+                            style={{ padding: '10px 14px' }}
+                          >
+                            Nafta
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="settings-section-title">KREJCARŮ ZA LITR PALIVA (Benzínka)</h3>
+                    <div className="form-grid">
+                      <div className="form-group">
+                        <label className="form-label">Benzínový nektar (Kč/l)</label>
+                        <div className="input-with-suffix">
+                          <input
+                            type="number"
+                            step="0.1"
+                            className="form-control"
+                            value={settings.petrolPrice || ''}
+                            onChange={(e) => setSettingsState({ ...settings, petrolPrice: Math.max(0, parseFloat(e.target.value) || 0) })}
+                            required
+                          />
+                          <span className="input-suffix">Kč/l</span>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">Naftová ropa (Kč/l)</label>
+                        <div className="input-with-suffix">
+                          <input
+                            type="number"
+                            step="0.1"
+                            className="form-control"
+                            value={settings.dieselPrice || ''}
+                            onChange={(e) => setSettingsState({ ...settings, dieselPrice: Math.max(0, parseFloat(e.target.value) || 0) })}
+                            required
+                          />
+                          <span className="input-suffix">Kč/l</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h3 className="settings-section-title">
+                      <Flag size={18} style={{ marginRight: 8 }} />
+                      KARTOTÉKA SPOLUJEZDCŮ (Paměť)
+                    </h3>
+                    <div className="passenger-input-group">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Jméno další oběti"
+                        value={newPassengerName}
+                        onChange={(e) => setNewPassengerName(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddPassenger())}
+                      />
+                      <button
+                        type="button"
+                        className="btn-racing btn-racing-cyan"
+                        onClick={handleAddPassenger}
+                        style={{ width: 'auto', padding: '10px 20px' }}
+                      >
+                        PŘIBRAT DO AUTO
+                      </button>
+                    </div>
+
+                    <div className="passenger-list-box">
+                      {settings.passengers.length === 0 ? (
+                        <p style={{ color: 'var(--text-secondary)', padding: 16, fontSize: 13, textAlign: 'center' }}>
+                          Garáž zeje prázdnotou, nikoho tu nemáš.
+                        </p>
+                      ) : (
+                        settings.passengers.map(name => (
+                          <div key={name} className="passenger-item">
+                            <span>{name}</span>
+                            <button
+                              type="button"
+                              className="btn-delete-passenger"
+                              onClick={() => handleDeletePassenger(name)}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: 30 }}>
+                      <button type="submit" className="btn-racing">
+                        <Save size={20} />
+                        <span>ZAMKNOUT TUNING (Uložit)</span>
+                      </button>
+                    </div>
+
+                  </form>
                 </div>
               </div>
             </div>
@@ -1410,9 +1410,9 @@ function App() {
                 <div className="form-grid" style={{ marginBottom: 24 }}>
                   <div className="form-group">
                     <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
+                    <input
+                      type="text"
+                      className="form-control"
                       placeholder="Norsko Touge Run"
                       value={summaryMsg}
                       onChange={(e) => setSummaryMsg(e.target.value)}
@@ -1420,9 +1420,9 @@ function App() {
                   </div>
                   <div className="form-group">
                     <label className="form-label">Variabilní symbol (Pro ty nejvíc pořádkumilovné)</label>
-                    <input 
-                      type="number" 
-                      className="form-control" 
+                    <input
+                      type="number"
+                      className="form-control"
                       placeholder="12345"
                       value={summaryVs}
                       onChange={(e) => setSummaryVs(e.target.value)}
@@ -1434,26 +1434,26 @@ function App() {
                   <Save size={18} style={{ marginRight: 8 }} />
                   PLATEBNÍ RAKETY (Naskenuj a plať, než tě příště nevezmeme)
                 </h3>
-                
+
                 {/* QR Codes Grid */}
                 <div className="summary-grid">
                   {/* Shared equal share QR code */}
                   {showSharedQr && (
-                    !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') || 
+                    !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ||
                     summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla')
                   ) && (
-                    <PaymentQrCode 
-                      amount={equalShareDisplay}
-                      name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
-                      message={summaryMsg || 'SÁREK EXPRESS'}
-                      vs={summaryVs}
-                      payingNames={summaryData.passengers.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla').map(p => p.name)}
-                    />
-                  )}
+                      <PaymentQrCode
+                        amount={equalShareDisplay}
+                        name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
+                        message={summaryMsg || 'SÁREK EXPRESS'}
+                        vs={summaryVs}
+                        payingNames={summaryData.passengers.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla').map(p => p.name)}
+                      />
+                    )}
 
                   {/* Individual overridden QR codes and special discount for Fíla */}
                   {summaryData.passengers.filter(p => p.isManual || p.name.trim().toLowerCase() === 'fíla').map(p => (
-                    <PaymentQrCode 
+                    <PaymentQrCode
                       key={p.name}
                       amount={p.amount || 0}
                       name={p.name}
@@ -1465,9 +1465,9 @@ function App() {
                 </div>
 
                 <div style={{ marginTop: 30 }}>
-                  <button 
-                    type="button" 
-                    className="btn-racing" 
+                  <button
+                    type="button"
+                    className="btn-racing"
                     onClick={handleResetActiveTrip}
                   >
                     <Car size={20} />

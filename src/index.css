@@ -1392,7 +1392,7 @@ p, span, label, input, button, table, select, textarea {
   width: 100%;
   max-width: 480px;
   margin: 0 auto 30px auto;
-  background: transparent;
+  background: #ffffff !important;
   aspect-ratio: 16 / 9;
   position: relative;
   display: flex;
@@ -1414,8 +1414,9 @@ p, span, label, input, button, table, select, textarea {
   -webkit-user-select: none;
   border: none;
   outline: none;
-  background-color: transparent !important;
-  background: transparent !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  transform: scale(1.02); /* Prevents black subpixel rendering borders on high-DPI/Retina screens */
 }
 
 /* absolute overlay button centered over the video */
