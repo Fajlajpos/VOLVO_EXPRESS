@@ -207,8 +207,12 @@ p, span, label, input, button, table, select, textarea {
   color: var(--text-primary);
 }
 
+.nav-icon-compass {
+  transform: rotate(var(--device-heading, 0deg));
+}
+
 .nav-tab:hover .nav-icon-compass {
-  transform: rotate(30deg);
+  transform: rotate(calc(var(--device-heading, 0deg) + 30deg)) scale(1.1);
 }
 
 .nav-tab:hover .nav-icon-wrench {
@@ -233,9 +237,9 @@ p, span, label, input, button, table, select, textarea {
 }
 
 @keyframes compass-spin-active {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.2); }
-  100% { transform: rotate(360deg) scale(1); }
+  0% { transform: rotate(var(--device-heading, 0deg)) scale(1); }
+  50% { transform: rotate(calc(var(--device-heading, 0deg) + 180deg)) scale(1.2); }
+  100% { transform: rotate(calc(var(--device-heading, 0deg) + 360deg)) scale(1); }
 }
 
 @keyframes wrench-wiggle-active {

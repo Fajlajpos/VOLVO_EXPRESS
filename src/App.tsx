@@ -53,6 +53,54 @@ function App() {
   // Navigation Screen State: 'active-trip' | 'summary' | 'settings'
   const [currentScreen, setCurrentScreen] = useState<'active-trip' | 'summary' | 'settings'>('active-trip');
 
+  // Compass Orientation State
+  const [deviceHeading, setDeviceHeading] = useState<number>(0);
+  const isOrientationListenerAdded = useRef<boolean>(false);
+
+  const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
+    const webkitHeading = (e as any).webkitCompassHeading;
+    if (webkitHeading !== undefined) {
+      setDeviceHeading(webkitHeading);
+    } else if (e.alpha !== null) {
+      setDeviceHeading(-e.alpha);
+    }
+  }, []);
+
+  const requestOrientationPermission = useCallback(async () => {
+    if (isOrientationListenerAdded.current) return;
+
+    if (
+      typeof window !== 'undefined' &&
+      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+    ) {
+      try {
+        const permissionState = await (DeviceOrientationEvent as any).requestPermission();
+        if (permissionState === 'granted') {
+          window.addEventListener('deviceorientation', handleOrientation);
+          isOrientationListenerAdded.current = true;
+        }
+      } catch (error) {
+        console.warn('DeviceOrientation permission request failed:', error);
+      }
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation);
+      isOrientationListenerAdded.current = true;
+    }
+  }, [handleOrientation]);
+
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      typeof (DeviceOrientationEvent as any).requestPermission !== 'function'
+    ) {
+      window.addEventListener('deviceorientation', handleOrientation);
+      isOrientationListenerAdded.current = true;
+    }
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [handleOrientation]);
+
   // Touch swipe handling for mobile navigation
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -229,6 +277,7 @@ function App() {
     // 1. Always play the startup soundtrack synchronously inside click event (never blocked!)
     playVolvoStartupSound();
     setIsLoadingSound(true);
+    requestOrientationPermission();
 
     if (videoRef.current) {
       // 2. Play the video MUTED (guaranteed to succeed on all mobile browsers!)
@@ -267,6 +316,7 @@ function App() {
   // Auth Handlers
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    requestOrientationPermission();
     const envEmail = import.meta.env.VITE_LOGIN_EMAIL || '';
     const envPassword = import.meta.env.VITE_LOGIN_PASSWORD || '';
 
@@ -766,16 +816,29 @@ function App() {
             <button 
               type="button" 
               className={`nav-tab ${currentScreen === 'active-trip' ? 'active' : ''}`}
-              onClick={() => setCurrentScreen('active-trip')}
+              onClick={() => {
+                setCurrentScreen('active-trip');
+                requestOrientationPermission();
+              }}
             >
-              <Compass className="nav-icon-compass" size={18} style={{ marginRight: 6 }} />
+              <Compass 
+                className="nav-icon-compass" 
+                size={18} 
+                style={{ 
+                  marginRight: 6,
+                  ['--device-heading' as any]: `${deviceHeading}deg`
+                }} 
+              />
               <span>Trasa</span>
             </button>
 
             <button 
               type="button" 
               className={`nav-tab ${currentScreen === 'settings' ? 'active' : ''}`}
-              onClick={() => setCurrentScreen('settings')}
+              onClick={() => {
+                setCurrentScreen('settings');
+                requestOrientationPermission();
+              }}
             >
               <Wrench className="nav-icon-wrench" size={18} style={{ marginRight: 6 }} />
               <span>Servis & Garáž <span className="hide-mobile">(Tuning)</span></span>
