@@ -264,18 +264,18 @@ function App() {
     return import.meta.env.VITE_ORS_API_KEY || '';
   };
 
-  // Helper to trigger visual transition timers (aligned with 9.87s sound length)
+  // Helper to trigger visual transition timers (aligned with 11.67s sound length)
   const triggerVisualFallbackTimers = () => {
-    // Trigger visual overlay fade out at 9.2 seconds (matching audio duration)
+    // Trigger visual overlay fade out at 11.0 seconds (matching audio duration)
     setTimeout(() => {
       setIsFadingOut(true);
-    }, 9200);
+    }, 11000);
 
-    // Transition overlay out completely at 9.8 seconds
+    // Transition overlay out completely at 11.6 seconds
     setTimeout(() => {
       setIsIgnited(true);
       sessionStorage.setItem('engine_ignited', 'true');
-    }, 9800);
+    }, 11600);
   };
 
 
@@ -698,7 +698,7 @@ function App() {
           >
             <video
               ref={videoRef}
-              src={`${import.meta.env.BASE_URL}0701.mp4`}
+              src={`${import.meta.env.BASE_URL}ffadfadfad.mp4`}
               className="ignition-video"
               playsInline
               muted
