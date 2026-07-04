@@ -1416,7 +1416,7 @@ p, span, label, input, button, table, select, textarea {
   outline: none;
   background-color: #ffffff !important;
   background: #ffffff !important;
-  transform: scale(1.02); /* Prevents black subpixel rendering borders on high-DPI/Retina screens */
+  transform: scale(1.08); /* Prevents black subpixel rendering borders on high-DPI/Retina screens */
 }
 
 /* absolute overlay button centered over the video */
