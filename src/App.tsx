@@ -60,14 +60,19 @@ function App() {
   const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
     const webkitHeading = (e as any).webkitCompassHeading;
     if (webkitHeading !== undefined) {
-      setDeviceHeading(webkitHeading);
+      // iOS: webkitCompassHeading is clockwise, so negate to rotate needle counter-clockwise to point North
+      setDeviceHeading(-webkitHeading);
     } else if (e.alpha !== null) {
-      setDeviceHeading(-e.alpha);
+      // Android alpha is counter-clockwise, so rotate needle clockwise (positive) to point North
+      setDeviceHeading(e.alpha);
     }
   }, []);
 
   const requestOrientationPermission = useCallback(async () => {
     if (isOrientationListenerAdded.current) return;
+
+    const useAbsolute = 'ondeviceorientationabsolute' in window;
+    const eventName = useAbsolute ? 'deviceorientationabsolute' : 'deviceorientation';
 
     if (
       typeof window !== 'undefined' &&
@@ -76,28 +81,31 @@ function App() {
       try {
         const permissionState = await (DeviceOrientationEvent as any).requestPermission();
         if (permissionState === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation);
+          window.addEventListener(eventName, handleOrientation);
           isOrientationListenerAdded.current = true;
         }
       } catch (error) {
         console.warn('DeviceOrientation permission request failed:', error);
       }
     } else {
-      window.addEventListener('deviceorientation', handleOrientation);
+      window.addEventListener(eventName, handleOrientation);
       isOrientationListenerAdded.current = true;
     }
   }, [handleOrientation]);
 
   useEffect(() => {
+    const useAbsolute = 'ondeviceorientationabsolute' in window;
+    const eventName = useAbsolute ? 'deviceorientationabsolute' : 'deviceorientation';
+
     if (
       typeof window !== 'undefined' &&
       typeof (DeviceOrientationEvent as any).requestPermission !== 'function'
     ) {
-      window.addEventListener('deviceorientation', handleOrientation);
+      window.addEventListener(eventName, handleOrientation);
       isOrientationListenerAdded.current = true;
     }
     return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
+      window.removeEventListener(eventName, handleOrientation);
     };
   }, [handleOrientation]);
 
