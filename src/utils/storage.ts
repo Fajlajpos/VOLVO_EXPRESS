@@ -34,7 +34,7 @@ const ACTIVE_TRIP_KEY = 'pay_way_active_trip';
 const SESSION_KEY = 'pay_way_session';
 
 const DEFAULT_SETTINGS: Settings = {
-  avgConsumption: 8.0,
+  avgConsumption: 8.3,
   fuelType: 'diesel',
   petrolPrice: 37,
   dieselPrice: 34,

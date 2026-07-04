@@ -734,7 +734,6 @@ function App() {
         <div className="brand" onClick={() => isLoggedIn && setCurrentScreen('active-trip')}>
           <div className="brand-text">
             <h1>SÁREK EXPRESS</h1>
-            <p>RYCHLE, ZBĚSILE A SPRAVEDLIVĚ (EXPENSE DIVISION)</p>
           </div>
         </div>
 
@@ -1477,6 +1476,9 @@ function App() {
         </>
       )}
 
+      <footer style={{ textAlign: 'center', marginTop: '40px', paddingBottom: '20px', fontSize: '11px', color: 'var(--text-secondary)', opacity: 0.7, letterSpacing: '1px' }}>
+        MADE BY FAJLAJP
+      </footer>
     </div>
   );
 }
