@@ -52,6 +52,41 @@ function App() {
   
   // Navigation Screen State: 'active-trip' | 'summary' | 'settings'
   const [currentScreen, setCurrentScreen] = useState<'active-trip' | 'summary' | 'settings'>('active-trip');
+
+  // Touch swipe handling for mobile navigation
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isLoggedIn) return;
+    if (touchStartX.current === null || touchStartY.current === null) return;
+
+    const diffX = e.changedTouches[0].clientX - touchStartX.current;
+    const diffY = e.changedTouches[0].clientY - touchStartY.current;
+
+    // Trigger swipe if the horizontal movement is significant and larger than vertical movement
+    if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      if (diffX > 0) {
+        // Swipe Right (finger moves left-to-right) -> Go to Trasa (left tab)
+        if (currentScreen === 'settings') {
+          setCurrentScreen('active-trip');
+        }
+      } else {
+        // Swipe Left (finger moves right-to-left) -> Go to Settings (right tab)
+        if (currentScreen === 'active-trip') {
+          setCurrentScreen('settings');
+        }
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
   
   // Settings State
   const [settings, setSettingsState] = useState<Settings>(getSettings());
@@ -75,7 +110,6 @@ function App() {
   
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [routingError, setRoutingError] = useState<string>('');
-  const [toastMessage, setToastMessage] = useState<string>('');
   
   // Autocomplete UI State
   const [suggestions, setSuggestions] = useState<OrsSuggestion[]>([]);
@@ -134,7 +168,6 @@ function App() {
       setIsManualDistance(active.distanceKm > 0 && !active.startPoint);
       
       setCurrentScreen('active-trip');
-      showToast('Našli jsme v garáži rozdělanou káru! Nahazujeme předchozí parametry...');
     } else {
       // Initialize trip passengers if no active trip is restored
       setTripPassengers(savedSettings.passengers.map(name => ({
@@ -169,11 +202,6 @@ function App() {
     tripPassengers, distanceKm, isLoggedIn, settings, calculateTotalPrice
   ]);
 
-  // Toast message helper
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
-  };
 
   // Get active API key (strictly from .env)
   const getOrsApiKey = (): string => {
@@ -644,31 +672,12 @@ function App() {
   }
 
   return (
-    <div className="app-container fade-in">
+    <div 
+      className="app-container fade-in"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       
-      {/* Toast Notification Container */}
-      {toastMessage && (
-        <div style={{
-          position: 'fixed',
-          top: 20,
-          right: 20,
-          backgroundColor: 'var(--bg-secondary)',
-          border: '1px solid var(--volvo-blue)',
-          borderRadius: '8px',
-          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-          padding: '12px 24px',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          fontSize: 15,
-          fontWeight: '600',
-          color: 'var(--volvo-blue)'
-        }} className="fade-in">
-          <Info size={18} color="var(--volvo-blue)" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* Main Header */}
       <header className="app-header">
@@ -767,12 +776,13 @@ function App() {
           </nav>
 
           {/* Screen Content Resolver */}
-          {currentScreen === 'active-trip' && (
-            <div className="trip-overview-grid fade-in">
+          <div className="screens-slider-viewport" style={{ display: currentScreen === 'summary' && summaryData ? 'none' : 'block' }}>
+            <div className="screens-slider-track" style={{ transform: `translateX(${currentScreen === 'settings' ? '-50%' : '0%'})` }}>
+              <div className={`slide-pane ${currentScreen === 'active-trip' ? 'active' : ''}`}>
+                <div className="trip-overview-grid">
               {/* Active Trip Left Panel: Config Form */}
               <div className="racing-card">
                 <h3 className="card-title">
-                  <span className="status-indicator"></span>
                   <Flag size={22} style={{ marginRight: 8 }} />
                   TRASA PRO DNEŠNÍ ZÁVOD
                 </h3>
@@ -990,7 +1000,6 @@ function App() {
               <div>
                 <div className="racing-card">
                   <h3 className="card-title">
-                    <span className="status-indicator"></span>
                     <Flag size={22} style={{ marginRight: 8 }} />
                     Kdo přežil tuhle divočinu? (Posádka)
                   </h3>
@@ -1138,14 +1147,13 @@ function App() {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+                </div>
+              </div>
 
           {currentScreen === 'summary' && summaryData && (
             <div className="fade-in">
               <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
                 <h2 className="card-title">
-                  <span className="status-indicator"></span>
                   <Trophy size={24} style={{ marginRight: 8 }} />
                   KDO KOLIK CÁLUJE (Finální účtenka)
                 </h2>
@@ -1243,10 +1251,9 @@ function App() {
             </div>
           )}
 
-          {currentScreen === 'settings' && (
-            <div className="racing-card fade-in">
+              <div className={`slide-pane ${currentScreen === 'settings' ? 'active' : ''}`}>
+                <div className="racing-card">
               <h2 className="card-title">
-                <span className="status-indicator"></span>
                 <Wrench size={24} style={{ marginRight: 8 }} />
                 TUNING GARÁŽ (Konfigurace stroje)
               </h2>
@@ -1390,8 +1397,10 @@ function App() {
                 </div>
 
               </form>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </>
       )}
 

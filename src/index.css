@@ -221,33 +221,7 @@ p, span, label, input, button, table, select, textarea {
 
 /* Status Indicator LED Pulse */
 .status-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background-color: var(--accent-green);
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 0 8px var(--accent-green);
-  vertical-align: middle;
-  flex-shrink: 0;
-}
-
-.status-indicator::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid var(--accent-green);
-  border-radius: 50%;
-  animation: pulse-led 2s infinite ease-out;
-  opacity: 0;
-}
-
-@keyframes pulse-led {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  100% { transform: scale(2.2); opacity: 0; }
+  display: none;
 }
 
 .card-title {
@@ -1642,6 +1616,37 @@ p, span, label, input, button, table, select, textarea {
     font-size: 11px;
   }
 }
+
+/* Screen Slider Viewport & Track Transitions */
+.screens-slider-viewport {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.screens-slider-track {
+  display: flex;
+  width: 200%;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.slide-pane {
+  width: 50%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 10px 4px;
+  opacity: 0.35;
+  transform: scale(0.975);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.slide-pane.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
 
 
 
