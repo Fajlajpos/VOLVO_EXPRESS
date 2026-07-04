@@ -1220,106 +1220,6 @@ function App() {
                 </div>
               </div>
 
-          {currentScreen === 'summary' && summaryData && (
-            <div className="fade-in">
-              <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
-                <h2 className="card-title">
-                  <Trophy size={24} style={{ marginRight: 8 }} />
-                  KDO KOLIK CÁLUJE (Finální účtenka)
-                </h2>
-
-                <div className="summary-stats">
-                  <div className="stat-box">
-                    <div className="stat-label">CELKEM UJETÝCH KILOMETRŮ</div>
-                    <div className="stat-val">{summaryData.distanceKm} km</div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="stat-label">CELKOVÁ ÚTRATA ZA BENZÍN</div>
-                    <div className="stat-val">{summaryData.totalPrice} Kč</div>
-                  </div>
-                </div>
-
-                <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: 16, border: '1px solid var(--border-color)', borderRadius: '8px', marginBottom: 24 }}>
-                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 'bold' }}>Kudy jsme letěli:</div>
-                  <div style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--volvo-blue)' }}>
-                    {summaryData.startPoint} {summaryData.endPoint && <><ArrowRight size={14} style={{ display: 'inline', margin: '0 6px' }} /> {summaryData.endPoint}</>}
-                  </div>
-                  {summaryData.stops.length > 0 && (
-                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>
-                      Kde jsme dělali bordel (Zastávky): {summaryData.stops.join(', ')}
-                    </div>
-                  )}
-                </div>
-
-                {/* Optional Message & VS for QR codes */}
-                <div className="form-grid" style={{ marginBottom: 24 }}>
-                  <div className="form-group">
-                    <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="Norsko Touge Run"
-                      value={summaryMsg}
-                      onChange={(e) => setSummaryMsg(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Variabilní symbol (Pro ty nejvíc pořádkumilovné)</label>
-                    <input 
-                      type="number" 
-                      className="form-control" 
-                      placeholder="12345"
-                      value={summaryVs}
-                      onChange={(e) => setSummaryVs(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <h3 className="settings-section-title" style={{ marginTop: 32 }}>
-                  <Save size={18} style={{ marginRight: 8 }} />
-                  PLATEBNÍ RAKETY (Naskenuj a plať, než tě příště nevezmeme)
-                </h3>
-                
-                {/* QR Codes Grid */}
-                <div className="summary-grid">
-                  {/* Shared equal share QR code */}
-                  {showSharedQr && (
-                    !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') || 
-                    summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla')
-                  ) && (
-                    <PaymentQrCode 
-                      amount={equalShareDisplay}
-                      name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
-                      message={summaryMsg || 'SÁREK EXPRESS'}
-                      vs={summaryVs}
-                    />
-                  )}
-
-                  {/* Individual overridden QR codes and special discount for Fíla */}
-                  {summaryData.passengers.filter(p => p.isManual || p.name.trim().toLowerCase() === 'fíla').map(p => (
-                    <PaymentQrCode 
-                      key={p.name}
-                      amount={p.amount || 0}
-                      name={p.name}
-                      message={summaryMsg || 'SÁREK EXPRESS'}
-                      vs={summaryVs}
-                    />
-                  ))}
-                </div>
-
-                <div style={{ marginTop: 30 }}>
-                  <button 
-                    type="button" 
-                    className="btn-racing" 
-                    onClick={handleResetActiveTrip}
-                  >
-                    <Car size={20} />
-                    <span>DOPLNIT NITRO A NASTARTOVAT ZNOVU</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
               <div className={`slide-pane ${currentScreen === 'settings' ? 'active' : ''}`}>
                 <div className="racing-card">
@@ -1471,6 +1371,107 @@ function App() {
               </div>
             </div>
           </div>
+
+          {currentScreen === 'summary' && summaryData && (
+            <div className="fade-in">
+              <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
+                <h2 className="card-title">
+                  <Trophy size={24} style={{ marginRight: 8 }} />
+                  KDO KOLIK CÁLUJE (Finální účtenka)
+                </h2>
+
+                <div className="summary-stats">
+                  <div className="stat-box">
+                    <div className="stat-label">CELKEM UJETÝCH KILOMETRŮ</div>
+                    <div className="stat-val">{summaryData.distanceKm} km</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="stat-label">CELKOVÁ ÚTRATA ZA BENZÍN</div>
+                    <div className="stat-val">{summaryData.totalPrice} Kč</div>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: 16, border: '1px solid var(--border-color)', borderRadius: '8px', marginBottom: 24 }}>
+                  <div style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: 8, fontWeight: 'bold' }}>Kudy jsme letěli:</div>
+                  <div style={{ fontSize: 18, fontWeight: 'bold', color: 'var(--volvo-blue)' }}>
+                    {summaryData.startPoint} {summaryData.endPoint && <><ArrowRight size={14} style={{ display: 'inline', margin: '0 6px' }} /> {summaryData.endPoint}</>}
+                  </div>
+                  {summaryData.stops.length > 0 && (
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8 }}>
+                      Kde jsme dělali bordel (Zastávky): {summaryData.stops.join(', ')}
+                    </div>
+                  )}
+                </div>
+
+                {/* Optional Message & VS for QR codes */}
+                <div className="form-grid" style={{ marginBottom: 24 }}>
+                  <div className="form-group">
+                    <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder="Norsko Touge Run"
+                      value={summaryMsg}
+                      onChange={(e) => setSummaryMsg(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Variabilní symbol (Pro ty nejvíc pořádkumilovné)</label>
+                    <input 
+                      type="number" 
+                      className="form-control" 
+                      placeholder="12345"
+                      value={summaryVs}
+                      onChange={(e) => setSummaryVs(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <h3 className="settings-section-title" style={{ marginTop: 32 }}>
+                  <Save size={18} style={{ marginRight: 8 }} />
+                  PLATEBNÍ RAKETY (Naskenuj a plať, než tě příště nevezmeme)
+                </h3>
+                
+                {/* QR Codes Grid */}
+                <div className="summary-grid">
+                  {/* Shared equal share QR code */}
+                  {showSharedQr && (
+                    !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') || 
+                    summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla')
+                  ) && (
+                    <PaymentQrCode 
+                      amount={equalShareDisplay}
+                      name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
+                      message={summaryMsg || 'SÁREK EXPRESS'}
+                      vs={summaryVs}
+                    />
+                  )}
+
+                  {/* Individual overridden QR codes and special discount for Fíla */}
+                  {summaryData.passengers.filter(p => p.isManual || p.name.trim().toLowerCase() === 'fíla').map(p => (
+                    <PaymentQrCode 
+                      key={p.name}
+                      amount={p.amount || 0}
+                      name={p.name}
+                      message={summaryMsg || 'SÁREK EXPRESS'}
+                      vs={summaryVs}
+                    />
+                  ))}
+                </div>
+
+                <div style={{ marginTop: 30 }}>
+                  <button 
+                    type="button" 
+                    className="btn-racing" 
+                    onClick={handleResetActiveTrip}
+                  >
+                    <Car size={20} />
+                    <span>DOPLNIT NITRO A NASTARTOVAT ZNOVU</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
 
