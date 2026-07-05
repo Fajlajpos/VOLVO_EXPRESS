@@ -43,6 +43,7 @@ function App() {
   });
   const [isLoadingSound, setIsLoadingSound] = useState<boolean>(false);
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
 
   // Navigation & Auth
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -290,25 +291,32 @@ function App() {
       videoPromise = videoRef.current.play();
     }
 
-    // 2. Play the startup soundtrack
+    // 2. Play the startup soundtrack immediately
     playVolvoStartupSound();
-    setIsLoadingSound(true);
-    requestOrientationPermission();
+    
+    // 3. Trigger the spring click animation
+    setIsClicked(true);
 
-    // 3. Handle video playback promise results
-    if (videoPromise !== undefined) {
-      videoPromise
-        .then(() => {
-          console.log("Muted video playback started successfully.");
-        })
-        .catch(err => {
-          console.warn("Muted video play blocked or failed. Running fallback visual transition...", err);
-          // If the video failed, we trigger the visual transition fallback timers
-          triggerVisualFallbackTimers();
-        });
-    } else {
-      triggerVisualFallbackTimers();
-    }
+    // 4. Delay transition to loading screen until button animation bounces back up (450ms)
+    setTimeout(() => {
+      setIsLoadingSound(true);
+      requestOrientationPermission();
+
+      // 5. Handle video playback promise results
+      if (videoPromise !== undefined) {
+        videoPromise
+          .then(() => {
+            console.log("Muted video playback started successfully.");
+          })
+          .catch(err => {
+            console.warn("Muted video play blocked or failed. Running fallback visual transition...", err);
+            // If the video failed, we trigger the visual transition fallback timers
+            triggerVisualFallbackTimers();
+          });
+      } else {
+        triggerVisualFallbackTimers();
+      }
+    }, 450);
   };
 
   const handleVideoEnded = () => {
@@ -711,11 +719,19 @@ function App() {
             {!isLoadingSound && (
               <button
                 type="button"
-                className="ignition-button-overlay"
+                className={`volvo-ev-start-btn ${isClicked ? 'is-clicked' : ''}`}
                 onClick={handleIgnition}
+                aria-label="Nastartovat motor"
               >
-                <KeyRound size={28} />
-                <span style={{ marginTop: 4 }}>NASTARTOVAT BEAST</span>
+                <span className="ev-btn-face">
+                  <span className="ev-btn-power-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                      <line x1="12" y1="2" x2="12" y2="12" />
+                    </svg>
+                  </span>
+                  <span className="ev-btn-label">START ENGINE</span>
+                </span>
               </button>
             )}
           </div>
@@ -952,7 +968,7 @@ function App() {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">ŠACHOVNICOVÁ VLAJKA (Kam)</label>
+                      <label className="form-label">CÍL (Kam)</label>
                       <div className="autocomplete-wrapper">
                         <input
                           type="text"
@@ -991,7 +1007,7 @@ function App() {
                             onClick={() => setRoundTrip(false)}
                             style={{ padding: '10px 14px' }}
                           >
-                            Jen tam (Single run)
+                            Jen tam
                           </button>
                           <button
                             type="button"
@@ -999,7 +1015,7 @@ function App() {
                             onClick={() => setRoundTrip(true)}
                             style={{ padding: '10px 14px' }}
                           >
-                            Tam a zpět (Double loop)
+                            Tam a zpět
                           </button>
                         </div>
                       </div>
@@ -1115,7 +1131,7 @@ function App() {
                     <div className="racing-card">
                       <h3 className="card-title">
                         <Trophy size={22} style={{ marginRight: 8 }} />
-                        DAŇOVÝ VÝMĚR (Vyúčtování)
+                        VYUČTOVÁNÍ  (ŽIDOVSTVÍ)
                       </h3>
 
                       <div className="summary-stats">
@@ -1215,7 +1231,7 @@ function App() {
                           disabled={!isTripValid()}
                         >
                           <Flag size={18} />
-                          <span>VYSTAVIT ÚČTENKY A UKÁZAT QR KÓDY</span>
+                          <span>VYSTAVIT ÚČTENKY</span>
                         </button>
                       </div>
                     </div>
