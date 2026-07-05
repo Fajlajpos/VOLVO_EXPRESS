@@ -998,55 +998,28 @@ function App() {
                       </div>
                     </div>
 
-                    {/* Round Trip Toggle & Routing Trigger */}
-                    <div className="form-grid" style={{ marginBottom: 20 }}>
-                      <div>
-                        <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
-                        <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
-                          <button
-                            type="button"
-                            className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
-                            onClick={() => setRoundTrip(false)}
-                            style={{ padding: '10px 14px' }}
-                          >
-                            Jen tam
-                          </button>
-                          <button
-                            type="button"
-                            className={`btn-racing ${roundTrip ? '' : 'btn-racing-secondary'}`}
-                            onClick={() => setRoundTrip(true)}
-                            style={{ padding: '10px 14px' }}
-                          >
-                            Tam a zpět
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="form-label">&nbsp;</label>
+                    {/* Round Trip Toggle */}
+                    <div style={{ marginBottom: 20 }}>
+                      <label className="form-label">Konfigurace převodovky (Mód jízdy)</label>
+                      <div className="display-flex-mobile-stack" style={{ display: 'flex', gap: 10 }}>
                         <button
                           type="button"
-                          className="btn-racing btn-racing-cyan"
-                          onClick={handleCalculateRoute}
-                          disabled={isCalculating}
+                          className={`btn-racing ${!roundTrip ? '' : 'btn-racing-secondary'}`}
+                          onClick={() => setRoundTrip(false)}
+                          style={{ padding: '10px 14px' }}
                         >
-                          <Compass size={18} />
-                          <span>{isCalculating ? 'Žhavíme navigátora...' : 'SPOČÍTAT TRASU (GPS satelit)'}</span>
+                          Jen tam
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn-racing ${roundTrip ? '' : 'btn-racing-secondary'}`}
+                          onClick={() => setRoundTrip(true)}
+                          style={{ padding: '10px 14px' }}
+                        >
+                          Tam a zpět
                         </button>
                       </div>
                     </div>
-
-                    {/* Loading state bar during calculation */}
-                    {isCalculating && (
-                      <div style={{ marginTop: 15 }}>
-                        <div className="nitro-gauge">
-                          <div className="nitro-fill" style={{ width: '85%' }}></div>
-                        </div>
-                        <div className="nitro-label">
-                          <span>GPS VSTŘIKOVÁNÍ</span>
-                          <span>Hledáme zkratky přes pole a lesy...</span>
-                        </div>
-                      </div>
-                    )}
 
                     <div className="form-grid m-t-20">
                       <div className="form-group">
@@ -1126,6 +1099,32 @@ function App() {
                         <div className="alert-warning" style={{ margin: '15px 0 0 0' }}>
                           <AlertTriangle size={18} />
                           <span>Nemůžeš jet sám, kdo by navigoval nebo ti podával vapo?</span>
+                        </div>
+                      )}
+
+                      {/* Route calculation button placed under the passenger list */}
+                      <div style={{ marginTop: 20 }}>
+                        <button
+                          type="button"
+                          className="btn-racing btn-racing-cyan"
+                          onClick={handleCalculateRoute}
+                          disabled={isCalculating}
+                        >
+                          <Compass size={18} />
+                          <span>{isCalculating ? 'Žhavíme navigátora...' : 'SPOČÍTAT TRASU (GPS satelit)'}</span>
+                        </button>
+                      </div>
+
+                      {/* Loading state bar during calculation */}
+                      {isCalculating && (
+                        <div style={{ marginTop: 15 }}>
+                          <div className="nitro-gauge">
+                            <div className="nitro-fill" style={{ width: '85%' }}></div>
+                          </div>
+                          <div className="nitro-label">
+                            <span>GPS VSTŘIKOVÁNÍ</span>
+                            <span>Hledáme zkratky přes pole a lesy...</span>
+                          </div>
                         </div>
                       )}
                     </div>
