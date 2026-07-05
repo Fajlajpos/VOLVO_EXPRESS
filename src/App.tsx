@@ -699,23 +699,25 @@ function App() {
     return (
       <div className={`ignition-overlay ${isFadingOut ? 'fade-out-overlay' : ''}`}>
         <div className="ignition-card-center">
-          <div
-            className="ignition-video-container"
-            style={{ margin: '0 auto' }}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <video
-              ref={videoRef}
-              src={`${import.meta.env.BASE_URL}ffadfadfad.mp4`}
-              className="ignition-video"
-              playsInline
-              muted
-              disablePictureInPicture
-              controlsList="nodownload nofullscreen noremoteplayback"
-              preload="auto"
-              onEnded={handleVideoEnded}
+          <div className="ignition-system-wrapper" style={{ position: 'relative', margin: '0 auto 30px auto', maxWidth: '480px' }}>
+            <div
+              className="ignition-video-container"
+              style={{ margin: 0 }}
               onContextMenu={(e) => e.preventDefault()}
-            />
+            >
+              <video
+                ref={videoRef}
+                src={`${import.meta.env.BASE_URL}ffadfadfad.mp4`}
+                className="ignition-video"
+                playsInline
+                muted
+                disablePictureInPicture
+                controlsList="nodownload nofullscreen noremoteplayback"
+                preload="auto"
+                onEnded={handleVideoEnded}
+                onContextMenu={(e) => e.preventDefault()}
+              />
+            </div>
             {!isLoadingSound && (
               <button
                 type="button"
