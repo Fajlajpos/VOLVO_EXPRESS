@@ -17,7 +17,7 @@ export async function searchAddress(query: string, apiKey: string): Promise<OrsS
   }
 
   const encodedQuery = encodeURIComponent(query);
-  const url = `https://api.openrouteservice.org/geocode/autocomplete?api_key=${apiKey}&text=${encodedQuery}&boundary.country=CZ&size=5`;
+  const url = `https://api.openrouteservice.org/geocode/autocomplete?api_key=${apiKey}&text=${encodedQuery}&boundary.country=CZ,SK,AT,PL,DE&size=5`;
 
   const response = await fetch(url);
   if (!response.ok) {
