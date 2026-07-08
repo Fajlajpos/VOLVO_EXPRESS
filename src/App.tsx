@@ -1021,32 +1021,24 @@ function App() {
                       </div>
                     </div>
 
-                    <div className="form-grid m-t-20">
-                      <div className="form-group">
-                        <label className="form-label">UJETÁ VZDÁLENOST (Kolik km podvozek zaplakal)</label>
-                        <div className="input-with-suffix">
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={distanceKm || ''}
-                            onChange={(e) => {
-                              setDistanceKm(Math.max(0, parseFloat(e.target.value) || 0));
-                              setIsManualDistance(true);
-                            }}
-                          />
-                          <span className="input-suffix">km</span>
+                    {isManualDistance && (
+                      <div className="form-grid m-t-20 fade-in">
+                        <div className="form-group">
+                          <label className="form-label">UJETÁ VZDÁLENOST (Ruční zadání při chybě GPS)</label>
+                          <div className="input-with-suffix">
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={distanceKm || ''}
+                              onChange={(e) => {
+                                setDistanceKm(Math.max(0, parseFloat(e.target.value) || 0));
+                              }}
+                            />
+                            <span className="input-suffix">km</span>
+                          </div>
                         </div>
                       </div>
-
-                      {isManualDistance && (
-                        <div className="alert-info" style={{ marginTop: 10 }}>
-                          <Info size={16} />
-                          <span>Vzdálenost zadána ručně. Snad si nevymýšlíš!</span>
-                        </div>
-                      )}
-                    </div>
-
-
+                    )}
 
                     <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
                       <button
@@ -1136,6 +1128,10 @@ function App() {
                       </h3>
 
                       <div className="summary-stats">
+                        <div className="stat-box">
+                          <div className="stat-label">CELKEM UJETÝCH KILOMETRŮ</div>
+                          <div className="stat-val">{roundTrip ? distanceKm * 2 : distanceKm} km</div>
+                        </div>
                         <div className="stat-box">
                           <div className="stat-label">ÚČET ZA BENZÍNKU (Celkem)</div>
                           <div className="stat-val">{totalPrice} Kč</div>
@@ -1423,28 +1419,16 @@ function App() {
                   )}
                 </div>
 
-                {/* Optional Message & VS for QR codes */}
-                <div className="form-grid" style={{ marginBottom: 24 }}>
-                  <div className="form-group">
-                    <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Norsko Touge Run"
-                      value={summaryMsg}
-                      onChange={(e) => setSummaryMsg(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Variabilní symbol (Pro ty nejvíc pořádkumilovné)</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="12345"
-                      value={summaryVs}
-                      onChange={(e) => setSummaryVs(e.target.value)}
-                    />
-                  </div>
+                {/* Optional Message for QR codes */}
+                <div className="form-group" style={{ marginBottom: 24 }}>
+                  <label className="form-label">Zpráva pro příjemce (Ať vědí, za co platí)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Norsko Touge Run"
+                    value={summaryMsg}
+                    onChange={(e) => setSummaryMsg(e.target.value)}
+                  />
                 </div>
 
                 <h3 className="settings-section-title" style={{ marginTop: 32 }}>
