@@ -39,6 +39,7 @@ export const PaymentQrCode: React.FC<PaymentQrCodeProps> = ({
         accountNumber: bankAccount,
         amount,
         vs,
+        message,
         recipientName: ownerName || undefined,
       });
 

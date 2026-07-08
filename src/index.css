@@ -362,7 +362,7 @@ p, span, label, input, button, table, select, textarea {
   color: var(--text-secondary);
 }
 
-/* Clean Premium Buttons - Liquid Glass Style */
+/* Clean Premium Buttons - Harmonized Frosted Glass Style */
 .btn-racing {
   display: inline-flex;
   align-items: center;
@@ -370,31 +370,28 @@ p, span, label, input, button, table, select, textarea {
   gap: 8px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.35) 0%, rgba(0, 80, 200, 0.15) 100%);
-  backdrop-filter: blur(25px) saturate(190%);
-  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.85) 0%, rgba(0, 80, 200, 0.72) 100%);
+  backdrop-filter: blur(25px) saturate(210%);
+  -webkit-backdrop-filter: blur(25px) saturate(210%);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   padding: 13px 26px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 9999px; /* Capsule pill shape from reference image */
+  border-radius: 12px; /* Cohesive rounded style matching cards and inputs */
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.4), /* subtle top/left inner rim */
-    inset -1px -1px 0 rgba(0, 0, 0, 0.1),
-    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
-    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
-    inset 0 -8px 16px rgba(0, 113, 227, 0.1), /* trapped refraction bottom glow */
-    0 4px 10px rgba(0, 0, 0, 0.03),
-    0 8px 24px rgba(0, 113, 227, 0.15); /* light-casting refracted shadow */
+    inset 0 1px 1px rgba(255, 255, 255, 0.3), /* inner top glare highlight */
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15), /* inner bottom depth */
+    0 4px 14px rgba(0, 113, 227, 0.15), /* soft brand blue glow */
+    0 1px 2px rgba(0, 0, 0, 0.04);
   width: 100%;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: none;
-  text-shadow: 0 1px 2px rgba(0, 48, 87, 0.2); /* Contrast protection */
+  text-shadow: 0 1px 2px rgba(0, 30, 60, 0.2); /* Contrast protection */
 }
 
-/* Diagonal reflection glare covering the entire capsule */
+/* Diagonal reflection glare matching the new rounded shape */
 .btn-racing::before {
   content: "";
   position: absolute;
@@ -402,8 +399,8 @@ p, span, label, input, button, table, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
-  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.05) 100%);
+  border-radius: 12px;
   pointer-events: none;
   transition: all 0.3s ease;
 }
@@ -414,24 +411,22 @@ p, span, label, input, button, table, select, textarea {
   position: absolute;
   top: 0;
   left: -50%;
-  width: 25%;
+  width: 30%;
   height: 100%;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
   pointer-events: none;
   transition: none;
 }
 
 .btn-racing:hover:not(:disabled) {
-  transform: translateY(-1px) scale(1.025);
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.45) 0%, rgba(0, 80, 200, 0.2) 100%);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.95) 0%, rgba(0, 80, 200, 0.82) 100%);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
-    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
-    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
-    inset 0 -6px 12px rgba(0, 113, 227, 0.15),
-    0 6px 15px rgba(0, 0, 0, 0.05),
-    0 16px 36px rgba(0, 113, 227, 0.22);
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 6px 18px rgba(0, 113, 227, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* Trigger shine wave animation on hover */
@@ -441,21 +436,19 @@ p, span, label, input, button, table, select, textarea {
 }
 
 .btn-racing:active:not(:disabled) {
-  transform: translateY(1px) scale(0.96);
+  transform: translateY(1px);
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 8px 0 12px -6px rgba(255, 255, 255, 0.4),
-    inset -8px 0 12px -6px rgba(255, 255, 255, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.4) 0%, rgba(0, 80, 200, 0.18) 100%);
+    inset 0 3px 6px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 113, 227, 0.05);
+  background: linear-gradient(135deg, rgba(0, 113, 227, 0.75) 0%, rgba(0, 80, 200, 0.62) 100%);
 }
 
 .btn-racing:disabled {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: rgba(0, 0, 0, 0.2);
-  border-color: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.08);
   box-shadow: none;
   cursor: not-allowed;
   transform: none !important;
@@ -466,21 +459,20 @@ p, span, label, input, button, table, select, textarea {
   opacity: 0.05;
 }
 
-/* Secondary Button (Gel Glass Style) */
+/* Secondary Button (Frosted Clean Light Gray Style) */
 .btn-racing-secondary {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.1) 100%);
-  backdrop-filter: blur(25px) saturate(190%);
-  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(240, 242, 245, 0.35) 100%);
+  backdrop-filter: blur(25px) saturate(210%);
+  -webkit-backdrop-filter: blur(25px) saturate(210%);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
-    inset 12px 0 16px -6px rgba(255, 255, 255, 0.6), /* left curved glass edge glow */
-    inset -12px 0 16px -6px rgba(255, 255, 255, 0.6), /* right curved glass edge glow */
-    inset 0 -8px 16px rgba(255, 255, 255, 0.2),
-    0 4px 10px rgba(0, 0, 0, 0.03),
-    0 8px 20px rgba(0, 0, 0, 0.05);
-  border-radius: 9999px; /* Capsule pill shape from reference image */
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.02),
+    0 4px 12px rgba(0, 0, 0, 0.02),
+    0 1px 2px rgba(0, 0, 0, 0.01);
+  border-radius: 12px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .btn-racing-secondary::before {
@@ -490,45 +482,44 @@ p, span, label, input, button, table, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
-  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%, rgba(0, 0, 0, 0.02) 100%);
+  border-radius: 12px;
   pointer-events: none;
 }
 
 .btn-racing-secondary:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.2) 100%);
-  border-color: rgba(255, 255, 255, 0.65);
-  transform: translateY(-1px) scale(1.025);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 242, 245, 0.5) 100%);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.6),
-    inset 14px 0 20px -5px rgba(255, 255, 255, 0.75), /* intensified left curved glow */
-    inset -14px 0 20px -5px rgba(255, 255, 255, 0.75), /* intensified right curved glow */
-    0 6px 15px rgba(0, 0, 0, 0.05),
-    0 12px 28px rgba(0, 0, 0, 0.08);
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.02),
+    0 6px 14px rgba(0, 0, 0, 0.04),
+    0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .btn-racing-secondary:active:not(:disabled) {
-  transform: translateY(1px) scale(0.96);
+  transform: translateY(1px);
   box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.15),
-    inset 8px 0 12px -6px rgba(255, 255, 255, 0.5),
-    inset -8px 0 12px -6px rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.2);
+    inset 0 3px 6px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.01);
+  background: linear-gradient(135deg, rgba(240, 242, 245, 0.6) 0%, rgba(220, 222, 225, 0.45) 100%);
 }
 
-/* Cyan Button (Gel Glass Style) */
+/* Cyan Button (Electric Teal-Cyan Style) */
 .btn-racing-cyan {
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.35) 0%, rgba(0, 80, 200, 0.15) 100%);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, rgba(0, 180, 219, 0.85) 0%, rgba(0, 131, 176, 0.72) 100%);
+  backdrop-filter: blur(25px) saturate(210%);
+  -webkit-backdrop-filter: blur(25px) saturate(210%);
+  border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
-    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
-    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
-    inset 0 -8px 16px rgba(0, 113, 227, 0.1),
-    0 4px 10px rgba(0, 0, 0, 0.03),
-    0 8px 24px rgba(0, 113, 227, 0.15);
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 4px 14px rgba(0, 210, 255, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.04);
   color: #ffffff;
-  border-radius: 9999px; /* Capsule pill shape from reference image */
+  border-radius: 12px;
+  text-shadow: 0 1px 2px rgba(0, 50, 70, 0.25);
 }
 
 .btn-racing-cyan::before {
@@ -538,36 +529,35 @@ p, span, label, input, button, table, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
-  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%, rgba(0, 0, 0, 0.05) 100%);
+  border-radius: 12px;
   pointer-events: none;
 }
 
 .btn-racing-cyan:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.4) 0%, rgba(0, 80, 200, 0.18) 100%);
+  background: linear-gradient(135deg, rgba(0, 180, 219, 0.95) 0%, rgba(0, 131, 176, 0.82) 100%);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
-    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
-    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
-    0 6px 15px rgba(0, 0, 0, 0.05),
-    0 12px 30px rgba(0, 113, 227, 0.22);
-  transform: translateY(-1px) scale(1.025);
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 6px 18px rgba(0, 210, 255, 0.28),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
-/* Danger Button (Gel Glass Style) */
+/* Danger Button (Racing Red Style) */
 .btn-racing-danger {
-  background: linear-gradient(135deg, rgba(255, 59, 48, 0.35) 0%, rgba(200, 30, 20, 0.15) 100%);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.85) 0%, rgba(200, 30, 20, 0.72) 100%);
+  backdrop-filter: blur(25px) saturate(210%);
+  -webkit-backdrop-filter: blur(25px) saturate(210%);
+  border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.4),
-    inset 12px 0 16px -6px rgba(255, 255, 255, 0.5), /* left curved glass edge glow */
-    inset -12px 0 16px -6px rgba(255, 255, 255, 0.5), /* right curved glass edge glow */
-    inset 0 -8px 16px rgba(255, 59, 48, 0.1),
-    0 4px 10px rgba(0, 0, 0, 0.05),
-    0 8px 24px rgba(255, 59, 48, 0.15);
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 4px 14px rgba(255, 59, 48, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.04);
   color: #ffffff;
-  border-radius: 9999px; /* Capsule pill shape from reference image */
-  text-shadow: 0 1px 2px rgba(100, 10, 5, 0.25);
+  border-radius: 12px;
+  text-shadow: 0 1px 2px rgba(80, 10, 5, 0.25);
 }
 
 .btn-racing-danger::before {
@@ -577,32 +567,32 @@ p, span, label, input, button, table, select, textarea {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
-  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%, rgba(0, 0, 0, 0.05) 100%);
+  border-radius: 12px;
   pointer-events: none;
 }
 
 .btn-racing-danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(255, 59, 48, 0.4) 0%, rgba(200, 30, 20, 0.18) 100%);
+  background: linear-gradient(135deg, rgba(255, 59, 48, 0.95) 0%, rgba(200, 30, 20, 0.82) 100%);
   box-shadow: 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.5),
-    inset 14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified left curved glow */
-    inset -14px 0 20px -5px rgba(255, 255, 255, 0.65), /* intensified right curved glow */
-    0 6px 15px rgba(0, 0, 0, 0.05),
-    0 12px 30px rgba(255, 59, 48, 0.22);
-  transform: translateY(-1px) scale(1.025);
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    0 6px 18px rgba(255, 59, 48, 0.28),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
+
 
 .btn-logout {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.55) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.45) 100%);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.85);
   color: var(--text-primary);
   padding: 8px 18px;
-  border-radius: 9999px; /* Capsule pill shape from reference image */
+  border-radius: 12px; /* Matches page layout */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -611,11 +601,8 @@ p, span, label, input, button, table, select, textarea {
   gap: 6px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-    inset 8px 0 10px -5px rgba(255, 255, 255, 0.65), /* left curved glass edge glow */
-    inset -8px 0 10px -5px rgba(255, 255, 255, 0.65), /* right curved glass edge glow */
-    inset 0 -4px 10px rgba(255, 255, 255, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.05);
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .btn-logout::before {
@@ -626,22 +613,22 @@ p, span, label, input, button, table, select, textarea {
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.15) 100%);
-  border-radius: 9999px;
+  border-radius: 12px;
   pointer-events: none;
 }
 
 .btn-logout:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 100%);
   color: var(--volvo-blue);
   border-color: rgba(255, 255, 255, 0.95);
-  transform: translateY(-1px) scale(1.03);
+  transform: translateY(-1px);
   box-shadow: 
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-    0 6px 15px rgba(0, 0, 0, 0.06);
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    0 6px 15px rgba(0, 0, 0, 0.05);
 }
 
 .btn-logout:active {
-  transform: translateY(1px) scale(0.97);
+  transform: translateY(1px);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 

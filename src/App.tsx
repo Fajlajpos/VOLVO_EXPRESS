@@ -185,7 +185,7 @@ function App() {
     roundTrip: boolean;
     passengers: PassengerState[];
   } | null>(null);
-  const [summaryMsg, setSummaryMsg] = useState<string>('');
+  const [summaryMsg, setSummaryMsg] = useState<string>('Nafta');
   const [summaryVs, setSummaryVs] = useState<string>('');
 
   // Debounce ref for address lookup
