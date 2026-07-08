@@ -186,7 +186,7 @@ function App() {
     passengers: PassengerState[];
   } | null>(null);
   const [summaryMsg, setSummaryMsg] = useState<string>('Nafta');
-  const [summaryVs, setSummaryVs] = useState<string>('');
+  const summaryVs = '';
 
   // Debounce ref for address lookup
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
