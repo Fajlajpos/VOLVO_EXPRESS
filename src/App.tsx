@@ -293,7 +293,7 @@ function App() {
 
     // 2. Play the startup soundtrack immediately
     playVolvoStartupSound();
-    
+
     // 3. Trigger the spring click animation
     setIsClicked(true);
 
@@ -755,7 +755,8 @@ function App() {
       <header className="app-header">
         <div className="brand" onClick={() => isLoggedIn && setCurrentScreen('active-trip')}>
           <div className="brand-text">
-            <h1>SÁREK EXPRESS</h1>
+            <h1 className="brand-title">SÁREK EXPRESS</h1>
+            <p className="brand-subtitle">PILOTNÍ PALUBNÍ SYSTÉM</p>
           </div>
         </div>
 
@@ -1298,10 +1299,10 @@ function App() {
                       </div>
                     </div>
 
-                    <h3 className="settings-section-title">KREJCARŮ ZA LITR PALIVA (Benzínka)</h3>
+                    <h3 className="settings-section-title">POJEBANÉ POHONNÉ HMOTY </h3>
                     <div className="form-grid">
                       <div className="form-group">
-                        <label className="form-label">Benzínový nektar (Kč/l)</label>
+                        <label className="form-label">Benzín (Kč/l)</label>
                         <div className="input-with-suffix">
                           <input
                             type="number"
@@ -1316,7 +1317,7 @@ function App() {
                       </div>
 
                       <div className="form-group">
-                        <label className="form-label">Naftová ropa (Kč/l)</label>
+                        <label className="form-label">Nafta (Kč/l)</label>
                         <div className="input-with-suffix">
                           <input
                             type="number"
@@ -1333,7 +1334,7 @@ function App() {
 
                     <h3 className="settings-section-title">
                       <Flag size={18} style={{ marginRight: 8 }} />
-                      KARTOTÉKA SPOLUJEZDCŮ (Paměť)
+                      NEJVĚTŠÍ ZABIJÁCI
                     </h3>
                     <div className="passenger-input-group">
                       <input
@@ -1402,7 +1403,7 @@ function App() {
                     <div className="stat-val">{summaryData.distanceKm} km</div>
                   </div>
                   <div className="stat-box">
-                    <div className="stat-label">CELKOVÁ ÚTRATA ZA BENZÍN</div>
+                    <div className="stat-label">CELKOVÁ ÚTRATA ZA POHONNOU CHCANKU</div>
                     <div className="stat-val">{summaryData.totalPrice} Kč</div>
                   </div>
                 </div>
@@ -1482,7 +1483,7 @@ function App() {
       )}
 
       <footer style={{ textAlign: 'center', marginTop: '40px', paddingBottom: '20px', fontSize: '11px', color: 'var(--text-secondary)', opacity: 0.7, letterSpacing: '1px' }}>
-        MADE BY FAJLAJP
+        MADE BY FAJLAJP BABYY
       </footer>
     </div>
   );
