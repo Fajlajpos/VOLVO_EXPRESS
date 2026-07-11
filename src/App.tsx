@@ -115,6 +115,12 @@ function App() {
   const touchStartY = useRef<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('.table-responsive')) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+      return;
+    }
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
   };
@@ -571,11 +577,17 @@ function App() {
     const manuals = activeChecked.filter(p => p.isManual);
     const sumManuals = manuals.reduce((sum, p) => sum + (p.amount || 0), 0);
 
-    const unmod = activeChecked.filter(p => !p.isManual);
+    // Unmodified passengers excluding Pája (since she pays 0)
+    const unmod = activeChecked.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'pája');
     const nUnmod = unmod.length;
 
     if (nUnmod === 0) {
-      return activeChecked;
+      return activeChecked.map(p => {
+        if (p.name.trim().toLowerCase() === 'pája') {
+          return { ...p, amount: 0 };
+        }
+        return p;
+      });
     }
 
     const remainingToSplit = Math.max(0, totalPrice - sumManuals);
@@ -602,6 +614,9 @@ function App() {
 
     // Map back to activeChecked passengers
     return activeChecked.map(p => {
+      if (p.name.trim().toLowerCase() === 'pája') {
+        return { ...p, amount: 0 };
+      }
       if (p.isManual) {
         return p;
       }
@@ -679,7 +694,7 @@ function App() {
   const sumManuals = getManualOverrideSum();
   const hasManuals = activeChecked.some(p => p.isManual);
   const remainingToSplit = Math.max(0, totalPrice - sumManuals);
-  const unmodifiedCount = activeChecked.filter(p => !p.isManual).length;
+  const unmodifiedCount = activeChecked.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'pája').length;
 
   const hasFilaInUnmod = activeChecked.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla');
   let equalShareRaw = 0;
@@ -1185,6 +1200,7 @@ function App() {
                                           value={p.isManual ? (p.amount || '') : (p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2))}
                                           placeholder={p.amount !== undefined && p.amount % 1 === 0 ? p.amount.toFixed(0) : p.amount?.toFixed(2)}
                                           onChange={(e) => handleManualAmountChange(p.name, e.target.value)}
+                                          disabled={p.name.trim().toLowerCase() === 'pája'}
                                         />
                                         {p.isManual && (
                                           <button
@@ -1200,8 +1216,8 @@ function App() {
                                       </div>
                                     </td>
                                     <td style={{ textAlign: 'center' }}>
-                                      <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal')}`}>
-                                        {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník')}
+                                      <span className={`split-badge ${p.isManual ? 'manual' : (p.name.trim().toLowerCase() === 'pája' ? 'princess' : (p.name.trim().toLowerCase() === 'fíla' ? 'discount' : 'equal'))}`}>
+                                        {p.isManual ? 'VIP taxa' : (p.name.trim().toLowerCase() === 'pája' ? 'Passenger princess' : (p.name.trim().toLowerCase() === 'fíla' ? 'Fíla (sleva 10%)' : 'Běžný smrtelník'))}
                                       </span>
                                     </td>
                                   </tr>
@@ -1442,14 +1458,14 @@ function App() {
                   {/* Shared equal share QR code */}
                   {showSharedQr && (
                     !summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ||
-                    summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla')
+                    summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla' && p.name.trim().toLowerCase() !== 'pája')
                   ) && (
                       <PaymentQrCode
                         amount={equalShareDisplay}
                         name={summaryData.passengers.some(p => !p.isManual && p.name.trim().toLowerCase() === 'fíla') ? "Běžní smrtelníci (každý)" : undefined}
                         message={summaryMsg || 'SÁREK EXPRESS'}
                         vs={summaryVs}
-                        payingNames={summaryData.passengers.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla').map(p => p.name)}
+                        payingNames={summaryData.passengers.filter(p => !p.isManual && p.name.trim().toLowerCase() !== 'fíla' && p.name.trim().toLowerCase() !== 'pája').map(p => p.name)}
                       />
                     )}
 

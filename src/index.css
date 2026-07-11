@@ -881,6 +881,11 @@ p, span, label, input, button, table, select, textarea {
   color: var(--accent-green);
 }
 
+.split-badge.princess {
+  background-color: rgba(236, 72, 153, 0.12);
+  color: #db2777;
+}
+
 /* Autocomplete Suggestion Dropdown */
 .autocomplete-wrapper {
   position: relative;
