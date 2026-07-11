@@ -45,7 +45,15 @@ export const getSettings = (): Settings => {
   try {
     const data = localStorage.getItem(SETTINGS_KEY);
     if (!data) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(data) };
+    const parsed = JSON.parse(data);
+    let passengers = (parsed.passengers || []).map((p: string) => p.trim()).filter((p: string) => p !== '');
+    
+    // Ensure "Pája" is in the passengers list
+    if (!passengers.some((p: string) => p.toLowerCase() === 'pája')) {
+      passengers.push('Pája');
+    }
+    
+    return { ...DEFAULT_SETTINGS, ...parsed, passengers };
   } catch {
     return DEFAULT_SETTINGS;
   }
