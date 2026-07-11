@@ -1391,7 +1391,7 @@ function App() {
 
           {currentScreen === 'summary' && summaryData && (
             <div className="fade-in">
-              <div className="racing-card" style={{ borderColor: 'var(--volvo-blue)' }}>
+              <div className="racing-card">
                 <h2 className="card-title">
                   <Trophy size={24} style={{ marginRight: 8 }} />
                   KDO KOLIK CÁLUJE (Finální účtenka)
