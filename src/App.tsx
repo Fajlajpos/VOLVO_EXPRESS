@@ -226,7 +226,7 @@ function App() {
         const existing = active.passengers.find(p => p.name.trim().toLowerCase() === name.trim().toLowerCase());
         return existing 
           ? { ...existing, name } // Ensure name matches the cleaned settings name
-          : { name, checked: name.trim().toLowerCase() === 'pája', amount: 0, isManual: false };
+          : { name, checked: false, amount: 0, isManual: false };
       });
       setTripPassengers(syncedPassengers);
       setDistanceKm(active.distanceKm);
@@ -237,7 +237,7 @@ function App() {
       // Initialize trip passengers if no active trip is restored
       setTripPassengers(savedSettings.passengers.map(name => ({
         name,
-        checked: name.trim().toLowerCase() === 'pája',
+        checked: false,
         amount: 0,
         isManual: false
       })));
@@ -688,7 +688,7 @@ function App() {
     setDistanceKm(0);
     setTripPassengers(settings.passengers.map(name => ({
       name,
-      checked: name.trim().toLowerCase() === 'pája',
+      checked: false,
       amount: 0,
       isManual: false
     })));
