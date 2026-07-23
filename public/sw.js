@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pay-way-v2';
+const CACHE_NAME = 'pay-way-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -36,7 +36,13 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   
   const url = new URL(event.request.url);
-  if (url.hostname.includes('openrouteservice.org') || url.hostname.includes('kurzy.cz')) {
+  if (
+    url.hostname.includes('openrouteservice.org') ||
+    url.hostname.includes('kurzy.cz') ||
+    url.pathname.endsWith('.mp4') ||
+    url.pathname.endsWith('.mp3') ||
+    event.request.headers.has('range')
+  ) {
     return;
   }
 

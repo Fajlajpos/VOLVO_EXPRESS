@@ -330,8 +330,18 @@ function App() {
     let videoPromise: Promise<void> | undefined;
     if (videoRef.current) {
       videoRef.current.muted = true;
-      videoRef.current.currentTime = 0; // ensure play starts from beginning
-      videoPromise = videoRef.current.play();
+      try {
+        if (videoRef.current.readyState >= 1) {
+          videoRef.current.currentTime = 0;
+        }
+      } catch (e) {
+        // ignore Safari readyState timing error
+      }
+      try {
+        videoPromise = videoRef.current.play();
+      } catch (e) {
+        console.warn("Mobile video play exception:", e);
+      }
     }
 
     // 2. Play the startup soundtrack immediately
@@ -764,9 +774,10 @@ function App() {
             >
               <video
                 ref={videoRef}
-                src={`${import.meta.env.BASE_URL}ffadfadfad.mp4`}
+                src="./ffadfadfad.mp4"
                 className="ignition-video"
                 playsInline
+                {...{ 'webkit-playsinline': 'true', 'x5-playsinline': 'true' } as any}
                 muted
                 disablePictureInPicture
                 controlsList="nodownload nofullscreen noremoteplayback"
