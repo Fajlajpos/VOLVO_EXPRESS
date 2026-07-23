@@ -4,22 +4,28 @@
   "description": "Sportovní kalkulačka pro spravedlivé rozdělení nákladů na palivo a generování českých platebních QR kódů.",
   "icons": [
     {
-      "src": "./favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./pwa-192x192.png",
+      "src": "./pwa-192x192.png?v=2",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "./pwa-512x512.png",
+      "src": "./pwa-192x192.png?v=2",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./pwa-512x512.png?v=2",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./pwa-512x512.png?v=2",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": "./",

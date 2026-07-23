@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pay-way-v1';
+const CACHE_NAME = 'pay-way-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
