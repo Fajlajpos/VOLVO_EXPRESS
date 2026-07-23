@@ -14,7 +14,9 @@ import {
   X,
   Compass,
   Coins,
-  RefreshCw
+  RefreshCw,
+  Smartphone,
+  Download
 } from 'lucide-react';
 
 import {
@@ -161,6 +163,44 @@ function App() {
   // Fuel Price Auto & Manual Refresh State
   const [isFetchingFuel, setIsFetchingFuel] = useState<boolean>(false);
   const [fuelFetchError, setFuelFetchError] = useState<string | null>(null);
+
+  // PWA Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isAppInstalled, setIsAppInstalled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+      setIsAppInstalled(true);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setIsAppInstalled(true);
+    }
+  };
 
   const refreshFuelPrices = useCallback(async (isAuto = false) => {
     setIsFetchingFuel(true);
@@ -1307,6 +1347,46 @@ function App() {
                       <span>Motor naladěn, ventily seřízeny, uloženo do paměti!</span>
                     </div>
                   )}
+
+                  {/* PWA Mobile Installation Box */}
+                  <div style={{ background: 'rgba(0, 113, 227, 0.06)', border: '1px solid rgba(0, 113, 227, 0.25)', borderRadius: 12, padding: 16, marginBottom: 24 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ background: 'var(--volvo-blue)', color: '#fff', padding: 10, borderRadius: 10, display: 'flex' }}>
+                          <Smartphone size={22} />
+                        </div>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+                            APLIKACE NA PLOCHU MOBILU (PWA)
+                          </h4>
+                          <p style={{ margin: '2px 0 0', fontSize: 13, color: 'var(--text-secondary)' }}>
+                            {isAppInstalled
+                              ? 'Aplikace PAY WAY je již nainstalována na ploše (PWA aktivní).'
+                              : 'Nainstaluj si PAY WAY na plochu pro bleskový přístup a rychlé používání na cestách.'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {deferredPrompt && !isAppInstalled && (
+                        <button
+                          type="button"
+                          className="btn-racing btn-racing-cyan"
+                          onClick={handleInstallPwa}
+                          style={{ width: 'auto', padding: '10px 18px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                        >
+                          <Download size={16} />
+                          <span>NAINSTALOVAT NA PLOCHU</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {!isAppInstalled && (
+                      <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed rgba(0, 113, 227, 0.2)', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        📱 <strong>iPhone (Safari):</strong> Klepněte dole na tlačítko <strong>Sdílet ⎋</strong> a vyberte <strong>"Přidat na plochu ➕"</strong>.<br />
+                        🤖 <strong>Android (Chrome):</strong> Klepněte nahoře na menu (tři tečky ⁝) a vyberte <strong>"Přidat na plochu"</strong> nebo <strong>"Nainstalovat aplikaci"</strong>.
+                      </div>
+                    )}
+                  </div>
 
 
 
