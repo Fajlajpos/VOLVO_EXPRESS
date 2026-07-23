@@ -1809,6 +1809,16 @@ p, span, label, input, button, table, select, textarea {
   padding: 10px 4px;
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-anim {
+  animation: spin 0.8s linear infinite;
+}
+
+
 
 
 

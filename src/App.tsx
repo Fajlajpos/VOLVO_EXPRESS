@@ -13,7 +13,8 @@ import {
   Info,
   X,
   Compass,
-  Coins
+  Coins,
+  RefreshCw
 } from 'lucide-react';
 
 import {
@@ -30,6 +31,7 @@ import {
 } from './utils/storage';
 
 import { searchAddress, calculateRoute, type OrsSuggestion } from './services/ors';
+import { fetchLiveFuelPrices } from './services/fuelPrices';
 import { PaymentQrCode } from './components/PaymentQrCode';
 import { playVolvoStartupSound } from './utils/engineSound';
 
@@ -156,6 +158,35 @@ function App() {
   const [settingsSavedMsg, setSettingsSavedMsg] = useState<boolean>(false);
   const [newPassengerName, setNewPassengerName] = useState<string>('');
 
+  // Fuel Price Auto & Manual Refresh State
+  const [isFetchingFuel, setIsFetchingFuel] = useState<boolean>(false);
+  const [fuelFetchError, setFuelFetchError] = useState<string | null>(null);
+
+  const refreshFuelPrices = useCallback(async (isAuto = false) => {
+    setIsFetchingFuel(true);
+    setFuelFetchError(null);
+    try {
+      const prices = await fetchLiveFuelPrices();
+      setSettingsState(prev => {
+        const updated: Settings = {
+          ...prev,
+          petrolPrice: prices.petrol,
+          dieselPrice: prices.diesel,
+          lastFuelUpdate: prices.lastUpdated || new Date().toISOString().split('T')[0]
+        };
+        saveSettings(updated);
+        return updated;
+      });
+    } catch (err) {
+      console.warn('Fuel price fetch failed:', err);
+      if (!isAuto) {
+        setFuelFetchError('Chyba při načítání cen z webu. Zkontrolujte připojení k internetu.');
+      }
+    } finally {
+      setIsFetchingFuel(false);
+    }
+  }, []);
+
   // Active Trip State
   const [startPoint, setStartPoint] = useState<string>('');
   const [startCoords, setStartCoords] = useState<[number, number] | null>(null);
@@ -242,7 +273,9 @@ function App() {
         isManual: false
       })));
     }
-  }, []);
+    // Auto-fetch current live fuel prices on page load
+    refreshFuelPrices(true);
+  }, [refreshFuelPrices]);
 
   // Save active trip automatically when any key trip states change
   useEffect(() => {
@@ -1322,7 +1355,31 @@ function App() {
                       </div>
                     </div>
 
-                    <h3 className="settings-section-title">POJEBANÉ POHONNÉ HMOTY </h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginTop: 24, marginBottom: 12 }}>
+                      <h3 className="settings-section-title" style={{ margin: 0 }}>
+                        <Coins size={18} style={{ marginRight: 8 }} />
+                        POJEBANÉ POHONNÉ HMOTY
+                      </h3>
+                      <button
+                        type="button"
+                        className="btn-racing btn-racing-cyan"
+                        onClick={() => refreshFuelPrices(false)}
+                        disabled={isFetchingFuel}
+                        style={{ padding: '8px 14px', fontSize: '12px', width: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                        title="Stáhnout aktuální průměrné ceny benzínu a nafty v ČR z webu"
+                      >
+                        <RefreshCw size={14} className={isFetchingFuel ? 'spin-anim' : ''} />
+                        <span>{isFetchingFuel ? 'STAHUJI CENY...' : 'AKTUALIZOVAT'}</span>
+                      </button>
+                    </div>
+
+                    {fuelFetchError && (
+                      <div className="alert-warning" style={{ marginBottom: 16 }}>
+                        <AlertTriangle size={18} style={{ marginRight: 8, display: 'inline-block', verticalAlign: 'middle' }} />
+                        <span>{fuelFetchError}</span>
+                      </div>
+                    )}
+
                     <div className="form-grid">
                       <div className="form-group">
                         <label className="form-label">Benzín (Kč/l)</label>

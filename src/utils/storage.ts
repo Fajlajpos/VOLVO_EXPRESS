@@ -4,6 +4,7 @@ export interface Settings {
   petrolPrice: number;
   dieselPrice: number;
   passengers: string[];
+  lastFuelUpdate?: string;
 }
 
 export interface PassengerState {
