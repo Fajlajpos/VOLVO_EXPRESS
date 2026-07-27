@@ -56,61 +56,6 @@ function App() {
   // Navigation Screen State: 'active-trip' | 'summary' | 'settings'
   const [currentScreen, setCurrentScreen] = useState<'active-trip' | 'summary' | 'settings'>('active-trip');
 
-  // Compass Orientation State
-  const [deviceHeading, setDeviceHeading] = useState<number>(0);
-  const isOrientationListenerAdded = useRef<boolean>(false);
-
-  const handleOrientation = useCallback((e: DeviceOrientationEvent) => {
-    const webkitHeading = (e as any).webkitCompassHeading;
-    if (webkitHeading !== undefined) {
-      // iOS: webkitCompassHeading is clockwise, so negate to rotate needle counter-clockwise to point North
-      setDeviceHeading(-webkitHeading);
-    } else if (e.alpha !== null) {
-      // Android alpha is counter-clockwise, so rotate needle clockwise (positive) to point North
-      setDeviceHeading(e.alpha);
-    }
-  }, []);
-
-  const requestOrientationPermission = useCallback(async () => {
-    if (isOrientationListenerAdded.current) return;
-
-    const useAbsolute = 'ondeviceorientationabsolute' in window;
-    const eventName = useAbsolute ? 'deviceorientationabsolute' : 'deviceorientation';
-
-    if (
-      typeof window !== 'undefined' &&
-      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
-    ) {
-      try {
-        const permissionState = await (DeviceOrientationEvent as any).requestPermission();
-        if (permissionState === 'granted') {
-          window.addEventListener(eventName, handleOrientation);
-          isOrientationListenerAdded.current = true;
-        }
-      } catch (error) {
-        console.warn('DeviceOrientation permission request failed:', error);
-      }
-    } else {
-      window.addEventListener(eventName, handleOrientation);
-      isOrientationListenerAdded.current = true;
-    }
-  }, [handleOrientation]);
-
-  useEffect(() => {
-    const useAbsolute = 'ondeviceorientationabsolute' in window;
-    const eventName = useAbsolute ? 'deviceorientationabsolute' : 'deviceorientation';
-
-    if (
-      typeof window !== 'undefined' &&
-      typeof (DeviceOrientationEvent as any).requestPermission !== 'function'
-    ) {
-      window.addEventListener(eventName, handleOrientation);
-      isOrientationListenerAdded.current = true;
-    }
-    return () => {
-      window.removeEventListener(eventName, handleOrientation);
-    };
-  }, [handleOrientation]);
 
   // Touch swipe handling for mobile navigation
   const touchStartX = useRef<number | null>(null);
@@ -353,7 +298,6 @@ function App() {
     // 4. Delay transition to loading screen until button animation bounces back up (450ms)
     setTimeout(() => {
       setIsLoadingSound(true);
-      requestOrientationPermission();
 
       // 5. Handle video playback promise results
       if (videoPromise !== undefined) {
@@ -386,7 +330,6 @@ function App() {
   // Auth Handlers
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    requestOrientationPermission();
     const envEmail = import.meta.env.VITE_LOGIN_EMAIL || '';
     const envPassword = import.meta.env.VITE_LOGIN_PASSWORD || '';
 
@@ -906,18 +849,12 @@ function App() {
             <button
               type="button"
               className={`nav-tab ${currentScreen === 'active-trip' ? 'active' : ''}`}
-              onClick={() => {
-                setCurrentScreen('active-trip');
-                requestOrientationPermission();
-              }}
+              onClick={() => setCurrentScreen('active-trip')}
             >
               <Compass
                 className="nav-icon-compass"
                 size={18}
-                style={{
-                  marginRight: 6,
-                  ['--device-heading' as any]: `${deviceHeading}deg`
-                }}
+                style={{ marginRight: 6 }}
               />
               <span>Trasa</span>
             </button>
@@ -925,10 +862,7 @@ function App() {
             <button
               type="button"
               className={`nav-tab ${currentScreen === 'settings' ? 'active' : ''}`}
-              onClick={() => {
-                setCurrentScreen('settings');
-                requestOrientationPermission();
-              }}
+              onClick={() => setCurrentScreen('settings')}
             >
               <Wrench className="nav-icon-wrench" size={18} style={{ marginRight: 6 }} />
               <span>Servis & Garáž <span className="hide-mobile">(Tuning)</span></span>
