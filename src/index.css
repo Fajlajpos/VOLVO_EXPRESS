@@ -24,6 +24,12 @@
 }
 
 /* Reset & Base Stylings */
+html {
+  background-color: #ebedf2;
+  margin: 0;
+  padding: 0;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -85,7 +91,7 @@ p, span, label, input, button, table, select, textarea {
   min-height: 100vh;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: env(safe-area-inset-top, 0px) 24px 0 24px;
   position: relative;
   z-index: 1;
 }
@@ -95,7 +101,7 @@ p, span, label, input, button, table, select, textarea {
   justify-content: space-between;
   align-items: center;
   padding: 18px 28px;
-  margin-top: 20px;
+  margin-top: 14px;
   margin-bottom: 30px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.5) 100%);
   backdrop-filter: blur(30px) saturate(200%);
@@ -1589,14 +1595,14 @@ p, span, label, input, button, table, select, textarea {
   }
   
   .app-container {
-    padding: 0 20px;
+    padding: calc(env(safe-area-inset-top, 0px) + 6px) 16px 0 16px;
   }
 
   .app-header {
     flex-direction: row;
     align-items: center;
     padding: 14px 20px;
-    margin-top: 10px;
+    margin-top: 2px;
     margin-bottom: 20px;
   }
 
